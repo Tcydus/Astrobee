@@ -139,37 +139,7 @@ public class YourService extends KiboRpcService {
 //    int[] intArray = new int[1280*960];
 //    LuminanceSource source = new RGBLuminanceSource(1280,960,intArray);
 //    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
 //    QRCodeReader reader = new QRCodeReader();
-
-    public static BitMatrix MatToBit(Mat source)
-    {
-        BitMatrix bitMatrix = new BitMatrix(768,640);
-//        bitMatrix.clear();
-//        Log.d("QRDiscover","Before set region");
-//        bitMatrix.setRegion(0,0,768,640);
-        byte[] byteArray  = new byte[768*640];
-        Log.d("QRDiscover","Before get");
-        source.get(0,0,byteArray);
-        Log.d("QRDiscover","Before loop");
-        int count = 0;
-        for(int height = 0,i=0;height < 640; height++)
-        {
-            for(int width = 0;width < 768; width++,i++)
-            {
-                if(byteArray[i] < 0) {
-                    bitMatrix.unset(width, height);
-                    count++;
-                }
-                else {
-                    bitMatrix.set(width,height);
-                }
-            }
-        }
-        Log.d("MatToBit","count = " + count);
-        return bitMatrix;
-    }
-
 
 //    public String scanQRImage(Bitmap bMap){
 //        String contents = null;
@@ -238,7 +208,40 @@ public class YourService extends KiboRpcService {
         return contents;
     }
 
-    public static String ScanQRFromMat(Mat source)
+    public static Mat getRectMat(Mat source,int x,int y,int width,int height){
+        Rect rectCrop = new Rect(x, y, width, height);
+        return  source.submat(rectCrop);
+    }
+
+    public BitMatrix MatToBit(Mat source)
+    {
+        BitMatrix bitMatrix = new BitMatrix(768,640);
+        bitMatrix.clear();
+        byte[] byteArray  = new byte[768*640];
+
+        Log.d("QRDiscover","Before loop");
+        int count = 0;
+        byte first_time = 0;
+        while (count < 50000 && first_time < 2) {
+            count = 0;
+            source.get(0,0,byteArray);
+            for (int height = 0, i = 0; height < 640; height++) {
+                for (int width = 0; width < 768; width++, i++) {
+                    if ((byteArray[i] >> 7) == 0) {
+                        bitMatrix.set(width, height);
+                        count++;
+                    }
+                }
+            }
+            source = getRectMat(api.getMatNavCam(),256,160,768,640);
+            Log.d("QRDiscover","Count = " + count);
+            ++first_time;
+        }
+        Log.d("QRDiscover","After loop");
+        return bitMatrix;
+    }
+
+    public String ScanQRFromMat(Mat source)
     {
         String contents = null;
         Log.d("QRDiscover","Before MatToBit");
@@ -344,22 +347,8 @@ public class YourService extends KiboRpcService {
         {
             Log.d("QRDiscover","Before moveto");
             moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-//            api.moveTo(point,quaternion,false);
-
-//            Bitmap snapshot = api.getBitmapNavCam();
-//            Log.d("QRDiscover","After getBitmap");
-//            Bitmap snapshot2 = Bitmap.createBitmap(snapshot,256,160,768,640);
-//            Bitmap snapshot3 = Bitmap.createScaledBitmap(snapshot2,400,400,false);
-//            Log.d("QRDiscover","After crop");
-
             Log.d("QRDiscover","Before getMatNav");
-            Mat snapshot = api.getMatNavCam();
-            Log.d("QRDiscover","Before Rect");
-            Rect rectCrop = new Rect(256, 160, 768, 640);
-            Log.d("QRDiscover","Before submat");
-            Mat snapshot2 = snapshot.submat(rectCrop);
-            Log.d("QRDiscover","Before scan");
-            decoded = ScanQRFromMat(snapshot2);
+            decoded = ScanQRFromMat(getRectMat(api.getMatNavCam(),256,160,768,640));
         }
         return  decoded;
     }
