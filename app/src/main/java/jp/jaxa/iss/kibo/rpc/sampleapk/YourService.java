@@ -66,60 +66,60 @@ public class YourService extends KiboRpcService {
 
 
 
-        String pos_x = GotoQR(11.49, -5.7f, 4.588f, 0.0, 0.0, 0.0,1.0f);
+        String pos_x = GotoQR(11.44, -5.7f, 4.588f, 0.0, 0.0, 0.0,1.0f);
         api.judgeSendDiscoveredQR(0,pos_x);
-//        String pos_z = GotoQR(11.00, -5.50, 4.40, 0.0, 0.707, 0.0,0.707);
-//        api.judgeSendDiscoveredQR(2,pos_z);
-//        String pos_y = GotoQR(10.917, -5.958, 5.42, 0.0, -0.707, 0.0,0.707);
-//        api.judgeSendDiscoveredQR(1,pos_y);
+        String pos_z = GotoQR(11.00, -5.50, 4.40, 0.0, 0.707, 0.0,0.707);
+        api.judgeSendDiscoveredQR(2,pos_z);
+        String pos_y = GotoQR(10.917, -5.958, 5.42, 0.0, -0.707, 0.0,0.707);
+        api.judgeSendDiscoveredQR(1,pos_y);
 //
-//        moveToWrapper(10.50, -6.45, 5.44, 0.0, 0.0, 0.0, 0.0);
-//        moveToWrapper(11.00, -7.15, 5.44, 0.0, 0.0, 0.707, -0.707);
-//
-//        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.0, -0.707, 0.0,0.707);
-//        api.judgeSendDiscoveredQR(5,pos_qz);
-//        String pos_qy = GotoQR(11.47, -7.958, 5.083, 0.0, 0.0, 0.0,1.0);
-//        api.judgeSendDiscoveredQR(4,pos_qy);
-//        String pos_qx = GotoQR(10.38, -7.542, 4.783, 0.0, 0.0, 1.0,0.0);
-//        api.judgeSendDiscoveredQR(3,pos_qx);
+        moveToWrapper(10.50, -6.45, 5.44, 0.0, 0.0, 0.0, 0.0);
+        moveToWrapper(11.00, -7.15, 5.44, 0.0, 0.0, 0.707, -0.707);
 
-//        String[] temp_p3_x = pos_x.split("pos_x, ");
-//        String[] temp_p3_y = pos_y.split("pos_y, ");
-//        String[] temp_p3_z = pos_z.split("pos_z, ");
-//        String[] temp_p3_qx = pos_qx.split("qua_x, ");
-//        String[] temp_p3_qy = pos_qy.split("qua_y, ");
-//        String[] temp_p3_qz = pos_qz.split("qua_z, ");
-//
-//        float p3_x = Float.parseFloat(temp_p3_x[1]);
-//        float p3_y = Float.parseFloat(temp_p3_y[1]);
-//        float p3_z = Float.parseFloat(temp_p3_z[1]);
-//        float p3_qx = Float.parseFloat(temp_p3_qx[1]);
-//        float p3_qy = Float.parseFloat(temp_p3_qy[1]);
-//        float p3_qz = Float.parseFloat(temp_p3_qz[1]);
-//        float p3_qw = 1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz);
-//
-//        Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
-//
-//
-//        moveToWrapper(10.7f,-7.54f,5.1f,0,0,0,0);
-//        moveToWrapper(10.7f,-9.48f,5.1f,0,0,0,0);
-//        boolean done = false;
-//        int ar_try = 0;
-//        while (!done && ar_try++ <= 5) {
-//            try {
-//                moveToWrapper(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
-//                p3_qw *= -1;
-//                Mat Ar = api.getMatNavCam();
-//                Mat Ar_id = getIDs(Ar);
-//                int id = (int) Ar_id.get(0, 0)[0];
-//                Log.d("getID", "ID = " + Integer.toString(id));
-//                api.judgeSendDiscoveredAR(Integer.toString(id));
-//                done = true;
-//            }
-//            catch (Exception e) {
-//                Log.d("getID", "getID Error :");
-//            }
-//        }
+        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.0, -0.707, 0.0,0.707);
+        api.judgeSendDiscoveredQR(5,pos_qz);
+        String pos_qy = GotoQR(11.47, -7.958, 5.083, 0.0, 0.0, 0.0,1.0);
+        api.judgeSendDiscoveredQR(4,pos_qy);
+        String pos_qx = GotoQR(10.38, -7.542, 4.783, 0.0, 0.0, 1.0,0.0);
+        api.judgeSendDiscoveredQR(3,pos_qx);
+
+        String[] temp_p3_x = pos_x.split("pos_x, ");
+        String[] temp_p3_y = pos_y.split("pos_y, ");
+        String[] temp_p3_z = pos_z.split("pos_z, ");
+        String[] temp_p3_qx = pos_qx.split("qua_x, ");
+        String[] temp_p3_qy = pos_qy.split("qua_y, ");
+        String[] temp_p3_qz = pos_qz.split("qua_z, ");
+
+        float p3_x = Float.parseFloat(temp_p3_x[1]);
+        float p3_y = Float.parseFloat(temp_p3_y[1]);
+        float p3_z = Float.parseFloat(temp_p3_z[1]);
+        float p3_qx = Float.parseFloat(temp_p3_qx[1]);
+        float p3_qy = Float.parseFloat(temp_p3_qy[1]);
+        float p3_qz = Float.parseFloat(temp_p3_qz[1]);
+        float p3_qw = 1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz);
+
+        Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
+
+
+        moveToWrapper(10.7f,-7.54f,5.1f,0,0,0,0);
+        moveToWrapper(10.7f,-9.48f,5.1f,0,0,0,0);
+        boolean done = false;
+        int ar_try = 0;
+        while (!done && ar_try++ <= 5) {
+            try {
+                moveToWrapper(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
+                p3_qw *= -1;
+                Mat Ar = api.getMatNavCam();
+                Mat Ar_id = getIDs(Ar);
+                int id = (int) Ar_id.get(0, 0)[0];
+                Log.d("getID", "ID = " + Integer.toString(id));
+                api.judgeSendDiscoveredAR(Integer.toString(id));
+                done = true;
+            }
+            catch (Exception e) {
+                Log.d("getID", "getID Error :");
+            }
+        }
 
 //        api.laserControl(true);
 
@@ -213,11 +213,13 @@ public class YourService extends KiboRpcService {
         return  source.submat(rectCrop);
     }
 
-    public BitMatrix MatToBit(Mat source)
+    BitMatrix gbitMatrix = new BitMatrix(640,576);
+
+    void MatToBit(Mat source)
     {
-        BitMatrix bitMatrix = new BitMatrix(768,640);
-        bitMatrix.clear();
-        byte[] byteArray  = new byte[768*640];
+//        BitMatrix bitMatrix = new BitMatrix(768,640);
+        gbitMatrix.clear();
+        byte[] byteArray  = new byte[640*576];
 
         Log.d("QRDiscover","Before loop");
         int count = 0;
@@ -225,30 +227,30 @@ public class YourService extends KiboRpcService {
         while (count < 50000 && first_time < 2) {
             count = 0;
             source.get(0,0,byteArray);
-            for (int height = 0, i = 0; height < 640; height++) {
-                for (int width = 0; width < 768; width++, i++) {
+            for (int height = 0, i = 0; height < 576; height++) {
+                for (int width = 0; width < 640; width++, i++) {
                     if ((byteArray[i] >> 7) == 0) {
-                        bitMatrix.set(width, height);
+                        gbitMatrix.set(width, height);
                         count++;
                     }
                 }
             }
-            source = getRectMat(api.getMatNavCam(),256,160,768,640);
+            source = getRectMat(api.getMatNavCam(),320,192,640,576);
             Log.d("QRDiscover","Count = " + count);
             ++first_time;
         }
         Log.d("QRDiscover","After loop");
-        return bitMatrix;
     }
 
     public String ScanQRFromMat(Mat source)
     {
         String contents = null;
         Log.d("QRDiscover","Before MatToBit");
-        BitMatrix source_bit = MatToBit(source);
+//        BitMatrix source_bit = MatToBit(source);
+        MatToBit(source);
         try {
             Log.d("QRDiscover","Before Detector");
-            DetectorResult detectorResult = new Detector(source_bit).detect();
+            DetectorResult detectorResult = new Detector(gbitMatrix).detect();
             Log.d("QRDiscover","Before Decode");
             DecoderResult decoderResult = new Decoder().decode(detectorResult.getBits());
             contents = decoderResult.getText();
@@ -261,97 +263,26 @@ public class YourService extends KiboRpcService {
         return contents;
     }
 
-//    public String scanQRImage3(Mat matQR){
-//        Bitmap bMap = null;
-//        Mat dstMat = null;
-//
-//        Log.d("QRDiscover","Before Detect");
-//        QRCodeDetector qrCodeDetector = new QRCodeDetector();
-//        qrCodeDetector.detect(matQR,dstMat);
-//
-//        Log.d("QRDiscover","Before matToBitmap");
-//        Utils.matToBitmap(dstMat,bMap);
-//
-//        String contents = null;
-//        //copy pixel data from the Bitmap into the 'intArray' array
-//        int[] intArray2 = new int[bMap.getHeight()*bMap.getWidth()];
-//        Log.d("QRDiscover","Before getPixel");
-//        bMap.getPixels(intArray2, 0, bMap.getWidth(), 0, 0, bMap.getWidth(), bMap.getHeight());
-//        Log.d("QRDiscover","Before Luminance");
-//        LuminanceSource source2 = new RGBLuminanceSource(bMap.getWidth(), bMap.getHeight(), intArray2);
-//        Log.d("QRDiscover","Before BinaryBitmap");
-//        BinaryBitmap bitmap2 = new BinaryBitmap(new HybridBinarizer(source2));
-//
-//        Log.d("QRDiscover","Before Hint");
-//        HashMap<DecodeHintType, Object> hint = new HashMap<>();
-//        Vector<BarcodeFormat> decodeFormats = new Vector<>();
-//        decodeFormats.addElement(BarcodeFormat.QR_CODE);
-//        hint.put(DecodeHintType.PURE_BARCODE,Boolean.TRUE);
-//        hint.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);
-//
-//        try {
-//            Log.d("QRDiscover","Before decode");
-//            com.google.zxing.Result result = reader.decode(bitmap2,hint);
-//            contents = result.getText();
-//            reader.reset();
-//
-//            Log.d("QRDiscover","content : " + contents);
-//        }
-//        catch (Exception e) {
-//            Log.d("QRDiscover","Can't Decode");
-//        }
-//        return contents;
-//    }
-
-    //----------------------------------------------End--------------------------------------------------------------
-
-    //----------------------------------------------Bitmap To Monochrome----------------------------------------------
-//    public BitMatrix getMonochrome(Bitmap bmap)
-//    {
-//        BitMatrix bitMatrix = new BitMatrix(bmap.getWidth(),bmap.getHeight());
-//        Bitmap bmpMonochrome = Bitmap.createBitmap(bmap.getWidth(), bmap.getHeight(), Bitmap.Config.ARGB_8888);
-//        Canvas canvas = new Canvas(bmpMonochrome);
-//        ColorMatrix ma = new ColorMatrix();
-//        ma.setSaturation(0);
-//        Paint paint = new Paint();
-//        paint.setColorFilter(new ColorMatrixColorFilter(ma));
-//        canvas.drawBitmap(bmap, 0, 0, paint);
-//
-//       int[] pixel = new int[bmpMonochrome.getWidth()*bmpMonochrome.getHeight()];
-//       bmpMonochrome.getPixels(pixel, 0, bmpMonochrome.getWidth(), 0, 0, bmpMonochrome.getWidth(), bmpMonochrome.getHeight());
-//       int h,w,index=0;
-//       for(h = 0;h < bmpMonochrome.getHeight();h++)
-//       {
-//           for(w = 0;w < bmpMonochrome.getWidth();w++)
-//           {
-//               int temp_pixel = pixel[index] & 0xFF;
-//               if(temp_pixel < 128)
-//                   bitMatrix.unset(w,h);
-//               else
-//                   bitMatrix.set(w,h);
-//               index++;
-//           }
-//       }
-//       return  bitMatrix;
-//    }
-    //----------------------------------------------End Bitmap To Monochrome----------------------------------------------
-
     public String GotoQR(double pos_x, double pos_y, double pos_z,
                          double qua_x, double qua_y, double qua_z,
                          double qua_w)
     {
         String decoded = null;
-
+        final Point p = new Point(pos_x,pos_y,pos_z);
+        final Quaternion q = new Quaternion((float)qua_x,(float)qua_y,(float)qua_z,(float)qua_w);
+        Log.d("QRDiscover","Before moveto");
+        moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
         int count = 0;
         while(decoded == null && count++ < 5)
         {
-            Log.d("QRDiscover","Before moveto");
-            moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
+            if(count > 1)
+                api.moveTo(p,q,false);
             Log.d("QRDiscover","Before getMatNav");
-            decoded = ScanQRFromMat(getRectMat(api.getMatNavCam(),256,160,768,640));
+            decoded = ScanQRFromMat(getRectMat(api.getMatNavCam(),320,192,640,576));
         }
         return  decoded;
     }
+
     public void moveToWrapper(double pos_x, double pos_y, double pos_z,
                               double qua_x, double qua_y, double qua_z,
                               double qua_w){
