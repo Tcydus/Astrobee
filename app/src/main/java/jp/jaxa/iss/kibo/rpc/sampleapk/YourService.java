@@ -41,42 +41,18 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         api.judgeSendStart();
 
-//        moveToWrapper(11.49, -5.7f, 4.588f, 0.0, 0.0, 0.0,1.0f);
-//        Mat temp_mat = api.getMatNavCam();
-//
-////            Log.d("Mat info", "width = " + temp_mat.width() + " height = " + temp_mat. + " chanel = " + temp_mat.channels());
-//        Log.d("Image info", "row = 0 col = 0 chanel = 0 = " + temp_mat.get(0, 0)[0]);
-//        Log.d("Image info", "row = 10 col = 10 chanel = 0 = " + temp_mat.get(10, 10)[0]);
-//        int width = 0,height = 0;
-//            for(height = 0;height < 960;height++)
-//            {
-//                for(width=0;width < 1280;width++)
-//                {
-//                    try {
-//                        double aa = temp_mat.get(height,width)[0];
-////                        if (temp_mat.get(height, width)[0] > 127)
-////                            Log.d("Image info", "row = " + height + " col = " + width + "Data = " + temp_mat.get(height, width)[0]);
-//                    }
-//                    catch (Exception e){
-//                        Log.d("Mat info","Error at row : " + height + " col : " + width);
-//                    }
-//                }
-//            }
 
-
-
-
-        String pos_x = GotoQR(11.44, -5.7f, 4.588f, 0.0, 0.0, 0.0,1.0f);
+        String pos_x = GotoQR(11.44, -5.7f, 4.588f, 0.0f, 0.0f, 0.0f,1.0f);
         api.judgeSendDiscoveredQR(0,pos_x);
-        String pos_z = GotoQR(11.00, -5.50, 4.40, 0.0, 0.707, 0.0,0.707);
+        String pos_z = GotoQR(11.00f, -5.50f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-        String pos_y = GotoQR(10.917, -5.958, 5.42, 0.0, -0.707, 0.0,0.707);
+        String pos_y = GotoQR(10.917f, -5.958f, 5.42f, 0.5f, -0.5f, 0.5f,0.5f);
         api.judgeSendDiscoveredQR(1,pos_y);
 //
-        moveToWrapper(10.50, -6.45, 5.44, 0.0, 0.0, 0.0, 0.0);
-        moveToWrapper(11.00, -7.15, 5.44, 0.0, 0.0, 0.707, -0.707);
+        viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
+        viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
-        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.0, -0.707, 0.0,0.707);
+        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.5f, -0.5f, 0.5f,0.5f);
         api.judgeSendDiscoveredQR(5,pos_qz);
         String pos_qy = GotoQR(11.47, -7.958, 5.083, 0.0, 0.0, 0.0,1.0);
         api.judgeSendDiscoveredQR(4,pos_qy);
@@ -101,14 +77,15 @@ public class YourService extends KiboRpcService {
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
 
 
-        moveToWrapper(10.7f,-7.54f,5.1f,0,0,0,0);
-        moveToWrapper(10.7f,-9.48f,5.1f,0,0,0,0);
+        viaMove(10.7f,-7.54f,5.1f,0,0,0,0);
+        viaMove(10.7f,-9.48f,5.1f,0,0,0,0);
         boolean done = false;
         int ar_try = 0;
         while (!done && ar_try++ <= 5) {
             try {
-                moveToWrapper(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
-                p3_qw *= -1;
+//                moveToWrapper(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
+//                p3_qw *= -1;
+                moveToWrapper(10.95,-9.59,5.40,0,0,0.707,-0.707);
                 Mat Ar = api.getMatNavCam();
                 Mat Ar_id = getIDs(Ar);
                 int id = (int) Ar_id.get(0, 0)[0];
@@ -296,6 +273,16 @@ public class YourService extends KiboRpcService {
             result = api.moveTo(point, quaternion, false);
             ++loopCounter;
         }
+    }
+
+    public void viaMove(double pos_x, double pos_y, double pos_z,
+    double qua_x, double qua_y, double qua_z,
+    double qua_w){
+        final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
+                (float)qua_z, (float)qua_w);
+        final Point point = new Point(pos_x, pos_y, pos_z);
+
+        api.moveTo(point,quaternion,false);
     }
     public Mat getIDs(Mat source)
     {
