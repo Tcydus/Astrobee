@@ -51,4 +51,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'com.quickbirdstudios:opencv:3.4.4-contrib'
     implementation 'com.google.zxing:core:3.4.0'
+    implementation 'com.yanzhenjie.zbar:zbar:1.0.0'
 }

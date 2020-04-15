@@ -16,10 +16,18 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.detector.Detector;
 import com.google.zxing.qrcode.decoder.Decoder;
 
+import com.yanzhenjie.zbar.Config;
+import com.yanzhenjie.zbar.Image;
+import com.yanzhenjie.zbar.ImageScanner;
+import com.yanzhenjie.zbar.Symbol;
+import com.yanzhenjie.zbar.SymbolSet;
+
 import org.opencv.aruco.Aruco;
 import org.opencv.aruco.Dictionary;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 
 import java.util.ArrayList;
@@ -42,17 +50,17 @@ public class YourService extends KiboRpcService {
         api.judgeSendStart();
 
 
-        String pos_x = GotoQR(11.44, -5.7f, 4.588f, 0.0f, 0.0f, 0.0f,1.0f);
+        String pos_x = GotoQR(11.45, -5.7f, 4.588f, 0.0f, 0.0f, 0.0f,1.0f);
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(11.00f, -5.50f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-        String pos_y = GotoQR(10.917f, -5.958f, 5.42f, 0.5f, -0.5f, 0.5f,0.5f);
+        String pos_y = GotoQR(10.917f, -5.958f, 5.42f, 0.707f, 0.0f, 0.707f,0.0f);
         api.judgeSendDiscoveredQR(1,pos_y);
 //
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
         viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
-        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.5f, -0.5f, 0.5f,0.5f);
+        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.707f, 0.0f, 0.707f,0.0f);
         api.judgeSendDiscoveredQR(5,pos_qz);
         String pos_qy = GotoQR(11.47, -7.958, 5.083, 0.0, 0.0, 0.0,1.0);
         api.judgeSendDiscoveredQR(4,pos_qy);
@@ -97,10 +105,33 @@ public class YourService extends KiboRpcService {
                 Log.d("getID", "getID Error :");
             }
         }
+        done = false;
+        ar_try = 0;
+        while (!done && ar_try++ <= 5) {
+            viaMove(10.95, -9.59, 5.40, 0, 0, 0.707, -0.707);
+            Mat gray = api.getMatNavCam();
 
+            Log.d("Circle","B4 blur");
+            Imgproc.medianBlur(gray, gray, 5);
+            Mat circle = new Mat();
+
+            Log.d("Circle","B4 hough");
+            Imgproc.HoughCircles(gray, circle, Imgproc.HOUGH_GRADIENT, 1.0,
+                    (double) gray.rows() / 16,
+                    100.0, 30.0, 5, 25);
+
+            Log.d("Circle","B4 for");
+            for (int i = 0; i < circle.cols(); i++) {
+                double[] c = circle.get(0, i);
+                Log.d("Circle", "x = " + c[0] + " y = " + c[1]);
+                done = true;
+            }
+        }
+        
 //        api.laserControl(true);
 
         api.judgeSendFinishSimulation();
+
     }
     @Override
     protected void runPlan2(){
@@ -147,6 +178,37 @@ public class YourService extends KiboRpcService {
 //        }
 //        return contents;
 //    }
+    public String scanQRImage(Bitmap bMap){
+        String contents = null;
+        int width = bMap.getWidth();
+        int height = bMap.getHeight();
+        int pixel[] = new int[width*height];
+        bMap.getPixels(pixel,0,width,0,0,width,height);
+        Image barcode = new Image(width,height,"RGB4");
+
+        Log.d("QRDiscover","B4 setData");
+        barcode.setData(pixel);
+
+        Log.d("QRDiscover","B4 setConfig");
+        ImageScanner reader = new ImageScanner();
+        reader.setConfig(Symbol.NONE, Config.ENABLE,0);
+        reader.setConfig(Symbol.QRCODE,Config.ENABLE,1);
+
+        Log.d("QRDiscover","B4 Convert");
+        Image barcode2 = barcode.convert("Y800");
+        Log.d("QRDiscover","B4 Scan");
+        int result = reader.scanImage(barcode2);
+
+        Log.d("QRDiscover","B4 loop");
+        if(result != 0){
+            SymbolSet symbolSet = reader.getResults();
+            for(Symbol symbol : symbolSet){
+                contents = symbol.getData();
+            }
+        }
+
+        return contents;
+    }
 
     public String scanQRImage2(Bitmap bMap)
     {
@@ -255,8 +317,13 @@ public class YourService extends KiboRpcService {
             if(count > 1)
                 api.moveTo(p,q,false);
             Log.d("QRDiscover","Before getMatNav");
-            decoded = ScanQRFromMat(getRectMat(api.getMatNavCam(),320,192,640,576));
+//            decoded = ScanQRFromMat(getRectMat(api.getMatNavCam(),320,192,640,576));
+            Bitmap snapshot = api.getBitmapNavCam();
+            Bitmap crop_snap = Bitmap.createBitmap(snapshot,256,160,768,640);
+            decoded = scanQRImage(crop_snap);
         }
+        Log.d("QRDiscover","count : " + count);
+        Log.d("QRDiscover","content : " + decoded);
         return  decoded;
     }
 
@@ -286,11 +353,19 @@ public class YourService extends KiboRpcService {
     }
     public Mat getIDs(Mat source)
     {
+
         Mat ids = new Mat();
         try {
+
             Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
             List<Mat> corners = new ArrayList<>();
             Aruco.detectMarkers(source, dictionary, corners, ids);
+            Mat corner_mat = corners.get(0);
+
+            for(int i = 0; i < corner_mat.height();i++){
+                for (int j = 0; j < corner_mat.width();j++)
+                    Log.d("ARDiscover","Corner = " + corner_mat.get(i,j) + " i = " + i + " j = " + j);
+            }
         }
         catch (Exception e) {
             Log.d("getIDs","Error");
