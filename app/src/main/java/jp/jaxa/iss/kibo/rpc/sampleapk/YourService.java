@@ -76,13 +76,14 @@ public class YourService extends KiboRpcService {
 
 
         int id = GotoAR(10.95,-9.59,5.40,0,0,0.707,-0.707);
-        Log.d("getID", "ID = " + Integer.toString(id));
+//        int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
         api.judgeSendDiscoveredAR(Integer.toString(id));
 
         boolean done = false;
         int ar_try = 0;
         while (!done && ar_try++ <= 5) {
-            viaMove(10.95, -9.59, 5.40, 0, 0, 0.707, -0.707);
+//            viaMove(10.95, -9.59, 5.40, 0, 0, 0.707, -0.707);
+//            viaMove(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
             Mat gray = api.getMatNavCam();
             Point[] p_cloud = api.getPointCloudHazCam().getPointArray();
 
@@ -229,12 +230,12 @@ public class YourService extends KiboRpcService {
 
             try {
                 Aruco.detectMarkers(source, dictionary, corners, ids);
+                id = (int) ids.get(0,0)[0];
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
             }
         }
 
-        id = (int) ids.get(0,0)[0];
         Log.d("getIDs", "Id : " + id);
         return id;
     }
