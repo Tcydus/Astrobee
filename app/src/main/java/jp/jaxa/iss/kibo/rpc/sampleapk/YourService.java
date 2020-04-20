@@ -50,11 +50,8 @@ public class YourService extends KiboRpcService {
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
         viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
-<<<<<<< HEAD
         String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.0f, -0.707f, 0.0f,0.707f);
-=======
-        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.5f, 0.5f, 0.5f,-0.5f);
->>>>>>> a2014f3af072e30e0faa2aa22566d26e1f609956
+
         api.judgeSendDiscoveredQR(5,pos_qz);
         String pos_qy = GotoQR(11.47, -7.958, 5.083, 0.0, 0.0, 0.0,1.0);
         api.judgeSendDiscoveredQR(4,pos_qy);
@@ -212,8 +209,8 @@ public class YourService extends KiboRpcService {
     }
 
     public void viaMove(double pos_x, double pos_y, double pos_z,
-    double qua_x, double qua_y, double qua_z,
-    double qua_w){
+                        double qua_x, double qua_y, double qua_z,
+                        double qua_w){
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
         final Point point = new Point(pos_x, pos_y, pos_z);
