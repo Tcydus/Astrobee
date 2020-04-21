@@ -19,8 +19,6 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.lang.Math;
-
 
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
@@ -85,38 +83,38 @@ public class YourService extends KiboRpcService {
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
         api.judgeSendDiscoveredAR(Integer.toString(id));
 
-        boolean done = false;
-        int ar_try = 0;
-        while (!done && ar_try++ <= 5) {
-//            viaMove(10.95, -9.59, 5.40, 0, 0, 0.707, -0.707);
-            viaMove(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
-            Mat gray = api.getMatNavCam();
-            Point[] p_cloud = api.getPointCloudHazCam().getPointArray();
-
-
-            Log.d("Circle","B4 blur");
-            Imgproc.medianBlur(gray, gray, 5);
-            Mat circle = new Mat();
-
-            Log.d("Circle","B4 hough");
-            Imgproc.HoughCircles(gray, circle, Imgproc.HOUGH_GRADIENT, 1.0,
-                    (double) gray.rows() / 16,
-                    100.0, 30.0, 5, 25);
-
-            Log.d("Circle","B4 for");
-            for (int i = 0; i < circle.cols(); i++) {
-                double[] c = circle.get(0, i);
-                int index = 0;
-//                for(int j =0; j < round(c[1]); j++)
-//                {
-//                    for(int k = 0;k < round(c[0]);k++)
-//                        index++;
-//                }
-                Log.d("Circle", "x = " + round(c[0]) + " y = " + round(c[1]));
-//                Log.d("Circle","PointCloud x : "+ p_cloud[index].getX() + " y : "+ p_cloud[index].getY() + " z : "+p_cloud[index].getZ());
-                done = true;
-            }
-        }
+//        boolean done = false;
+//        int ar_try = 0;
+//        while (!done && ar_try++ <= 5) {
+////            viaMove(10.95, -9.59, 5.40, 0, 0, 0.707, -0.707);
+//            viaMove(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
+//            Mat gray = api.getMatNavCam();
+//            Point[] p_cloud = api.getPointCloudHazCam().getPointArray();
+//
+//
+//            Log.d("Circle","B4 blur");
+//            Imgproc.medianBlur(gray, gray, 5);
+//            Mat circle = new Mat();
+//
+//            Log.d("Circle","B4 hough");
+//            Imgproc.HoughCircles(gray, circle, Imgproc.HOUGH_GRADIENT, 1.0,
+//                    (double) gray.rows() / 16,
+//                    100.0, 30.0, 5, 25);
+//
+//            Log.d("Circle","B4 for");
+//            for (int i = 0; i < circle.cols(); i++) {
+//                double[] c = circle.get(0, i);
+//                int index = 0;
+////                for(int j =0; j < round(c[1]); j++)
+////                {
+////                    for(int k = 0;k < round(c[0]);k++)
+////                        index++;
+////                }
+//                Log.d("Circle", "x = " + round(c[0]) + " y = " + round(c[1]));
+////                Log.d("Circle","PointCloud x : "+ p_cloud[index].getX() + " y : "+ p_cloud[index].getY() + " z : "+p_cloud[index].getZ());
+//                done = true;
+//            }
+//        }
 
         api.laserControl(true);
 
@@ -138,11 +136,11 @@ public class YourService extends KiboRpcService {
 
         int width = bMap.getWidth();
         int height = bMap.getHeight();
-        int pixel[] = new int[width*height];
+        int[] pixel = new int[width*height];
         bMap.getPixels(pixel,0,width,0,0,width,height);
         Image barcode = new Image(width,height,"RGB4");
 
-
+g
         barcode.setData(pixel);
 
 
