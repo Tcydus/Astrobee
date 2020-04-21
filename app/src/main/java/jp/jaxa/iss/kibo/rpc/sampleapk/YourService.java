@@ -13,7 +13,6 @@ import com.yanzhenjie.zbar.SymbolSet;
 import org.opencv.aruco.Aruco;
 import org.opencv.aruco.Dictionary;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 
-import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 
 /**
