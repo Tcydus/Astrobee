@@ -12,11 +12,14 @@ import com.yanzhenjie.zbar.SymbolSet;
 
 import org.opencv.aruco.Aruco;
 import org.opencv.aruco.Dictionary;
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 import gov.nasa.arc.astrobee.Result;
@@ -205,6 +208,7 @@ public class YourService extends KiboRpcService {
             try {
                 Aruco.detectMarkers(source, dictionary, corners, ids);
                 id = (int) ids.get(0,0)[0];
+                getArPos(corners);
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
             }
@@ -212,4 +216,39 @@ public class YourService extends KiboRpcService {
         Log.d("getIDs", "Id : " + id);
         return id;
     }
+
+    public void getArPos(List<Mat> corner){
+
+        Mat cam_mat = new Mat(3,3, CvType.CV_64F);
+        double[] cam_value = {344.173397, 0.000000, 630.793795, 0.000000, 344.277922, 487.033834, 0.000000,
+                0.000000, 1.000000};
+        cam_mat.put(0,0,cam_value);
+        Log.d("Aruco","cam_mat 0 :" + cam_mat.get(0,0)[0] + " cam_mat 3 : " + cam_mat.get(0,2)[0]);
+        Log.d("Aruco","cam_mat 5 :" + cam_mat.get(1,1)[0] + " cam_mat 6 : " + cam_mat.get(1,2)[0]);
+
+        Mat dist_mat = new Mat(1,5, CvType.CV_64F);
+        double[] dist_value = {-0.152963, 0.017530, -0.001107, -0.000210, 0.000000};
+        dist_mat.put(0,0,dist_value);
+
+        Mat rvec = new Mat();
+        Mat tvec = new Mat();
+
+        Aruco.estimatePoseSingleMarkers(corner,5,cam_mat,dist_mat,rvec,tvec);
+
+        Log.d("Aruco","tvec row : " + tvec.rows() + "tvec col" + tvec.cols());
+        Log.d("Aruco","rvec row : " + rvec.rows() + "rvec col" + rvec.cols());
+
+        for(int i = 0;i<tvec.rows();i++)
+        {
+            for(int j = 0;j<tvec.cols();j++)
+                Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[0]);
+        }
+
+        for(int i = 0;i<rvec.rows();i++)
+        {
+            for(int j = 0;j<rvec.cols();j++)
+                Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[0]);
+        }
+    }
+
 }
