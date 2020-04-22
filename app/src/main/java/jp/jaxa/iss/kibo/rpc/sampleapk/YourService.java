@@ -40,14 +40,13 @@ public class YourService extends KiboRpcService {
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(11.00f, -5.50f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-        String pos_y = GotoQR(10.917f, -5.958f, 5.42f, 0.0f, -0.707f, 0.0f,0.707f);
+        String pos_y = GotoQR(10.917f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(1,pos_y);
 //
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
         viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
         String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.0f, -0.707f, 0.0f,0.707f);
-
         api.judgeSendDiscoveredQR(5,pos_qz);
         String pos_qy = GotoQR(11.47, -7.958, 5.083, 0.0, 0.0, 0.0,1.0);
         api.judgeSendDiscoveredQR(4,pos_qy);
@@ -69,6 +68,7 @@ public class YourService extends KiboRpcService {
         float p3_qz = Float.parseFloat(temp_p3_qz[1]);
         float p3_qw = (float) sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz));
 
+
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
 
 
@@ -78,6 +78,8 @@ public class YourService extends KiboRpcService {
 
 
 //        int id = GotoAR(10.95,-9.59,5.40,0,0,0.707,-0.707);
+
+
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
         api.judgeSendDiscoveredAR(Integer.toString(id));
 
@@ -96,15 +98,20 @@ public class YourService extends KiboRpcService {
     }
     // You can add your method
 
-    public String scanQRImage(Bitmap bMap){
+    public String scanQRImage(){
         String contents = null;
+//        Bitmap snapshot = api.getBitmapNavCam();
+//        Bitmap bMap = Bitmap.createBitmap(snapshot,256,160,768,640);
+//        int width = bMap.getWidth();
+//        int height = bMap.getHeight();
+//        int[] pixel = new int[width*height];
+//        bMap.getPixels(pixel,0,width,0,0,width,height);
+//        Image barcode = new Image(width,height,"RGB4");
 
-        int width = bMap.getWidth();
-        int height = bMap.getHeight();
-        int[] pixel = new int[width*height];
-        bMap.getPixels(pixel,0,width,0,0,width,height);
-        Image barcode = new Image(width,height,"RGB4");
-
+        Mat capture_mat = api.getMatNavCam();
+        byte[] pixel = new byte[1280*960];
+        capture_mat.get(0,0,pixel);
+        Image barcode = new Image(1280,960,"Y800");
         barcode.setData(pixel);
 
 
@@ -113,10 +120,9 @@ public class YourService extends KiboRpcService {
         reader.setConfig(Symbol.QRCODE,Config.ENABLE,1);
 
 
-        Image barcode2 = barcode.convert("Y800");
-
-        int result = reader.scanImage(barcode2);
-
+//        Image barcode2 = barcode.convert("Y800");
+//        int result = reader.scanImage(barcode2);
+            int result = reader.scanImage(barcode);
 
         if(result != 0){
             SymbolSet symbolSet = reader.getResults();
@@ -146,9 +152,7 @@ public class YourService extends KiboRpcService {
                 api.moveTo(p,q,false);
             Log.d("QRDiscover","Before getMatNav");
 //            decoded = ScanQRFromMat(getRectMat(api.getMatNavCam(),320,192,640,576));
-            Bitmap snapshot = api.getBitmapNavCam();
-            Bitmap crop_snap = Bitmap.createBitmap(snapshot,256,160,768,640);
-            decoded = scanQRImage(crop_snap);
+            decoded = scanQRImage();
         }
         Log.d("QRDiscover","count : " + count);
         Log.d("QRDiscover","content : " + decoded);
@@ -180,6 +184,7 @@ public class YourService extends KiboRpcService {
         api.moveTo(point,quaternion,false);
     }
 
+
     public int GotoAR(double pos_x, double pos_y, double pos_z,
                       double qua_x, double qua_y, double qua_z,
                       double qua_w)
@@ -204,7 +209,6 @@ public class YourService extends KiboRpcService {
                 Log.d("getIDs", "Error");
             }
         }
-
         Log.d("getIDs", "Id : " + id);
         return id;
     }
