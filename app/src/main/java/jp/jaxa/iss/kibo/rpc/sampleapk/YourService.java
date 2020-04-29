@@ -78,8 +78,8 @@ public class YourService extends KiboRpcService {
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
 
 
-        viaMove(10.7f,-7.54f,5.1f,0,0,0.707f,-0.707f);
-        viaMove(10.7f,-9.48f,5.1f,0,0,0.707f,-0.707f);
+        viaMove(10.65f,-7.54f,4.4f,0,0,0.707f,-0.707f);
+        viaMove(10.65f,-9.48f,4.4f,0,0,0.707f,-0.707f);
 
 
 
