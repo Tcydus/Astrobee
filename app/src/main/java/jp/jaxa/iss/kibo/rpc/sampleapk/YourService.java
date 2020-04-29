@@ -16,6 +16,8 @@ import org.opencv.aruco.Dictionary;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 
 import java.util.ArrayList;
@@ -211,10 +213,12 @@ public class YourService extends KiboRpcService {
             moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
             qua_w *= -1;
             Mat source = api.getMatNavCam();
+            Mat blur = new Mat();
+            Imgproc.GaussianBlur(source,blur,new Size(5,5),0);
             List<Mat> corners = new ArrayList<>();
 
             try {
-                Aruco.detectMarkers(source, dictionary, corners, ids);
+                Aruco.detectMarkers(blur, dictionary, corners, ids);
                 id = (int) ids.get(0,0)[0];
                 getArPos(corners);
             } catch (Exception e) {
