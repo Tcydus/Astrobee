@@ -11,6 +11,7 @@ import com.yanzhenjie.zbar.SymbolSet;
 
 
 import org.opencv.aruco.Aruco;
+import org.opencv.aruco.DetectorParameters;
 import org.opencv.aruco.Dictionary;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -75,8 +76,8 @@ public class YourService extends KiboRpcService {
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
 
 
-        viaMove(10.7f,-7.54f,5.1f,0,0,0,0);
-        viaMove(10.7f,-9.48f,5.1f,0,0,0,0);
+        viaMove(10.7f,-7.54f,5.1f,0,0,0.707f,-0.707f);
+        viaMove(10.7f,-9.48f,5.1f,0,0,0.707f,-0.707f);
 
 
 
@@ -197,6 +198,13 @@ public class YourService extends KiboRpcService {
         int id = -1;
         byte counter = 0;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
+        DetectorParameters detectorParameters = DetectorParameters.create();
+
+        detectorParameters.set_adaptiveThreshWinSizeMax(5);
+        detectorParameters.set_adaptiveThreshWinSizeMin(5);
+
+        detectorParameters.set_maxMarkerPerimeterRate(1.0);
+        detectorParameters.set_minMarkerPerimeterRate(0.1);
 
         while(id < 0 && counter++ < 5) {
 
