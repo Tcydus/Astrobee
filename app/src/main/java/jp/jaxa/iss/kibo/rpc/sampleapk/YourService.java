@@ -250,7 +250,7 @@ public class YourService extends KiboRpcService {
         for(int i = 0;i<tvec.rows();i++)
         {
             for(int j = 0;j<tvec.cols();j++)
-                Log.d("Aruco","tvec rol" + i +" col " + j + " : nawin" + tvec.get(i,j)[0]);
+                Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[0]);
         }
 
         for(int i = 0;i<rvec.rows();i++)
