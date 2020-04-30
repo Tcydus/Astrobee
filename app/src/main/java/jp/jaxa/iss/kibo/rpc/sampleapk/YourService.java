@@ -46,13 +46,13 @@ public class YourService extends KiboRpcService {
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(11.00f, -5.50f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-        String pos_y = GotoQR(10.917f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f);
+        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(1,pos_y);
 //
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
         viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
-        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.0f, 0.707f, 0.0f,0.707f);
+        String pos_qz = GotoQR(10.917, -7.658, 5.42, 0.707f, 0.0f, 0.707f,0.0f);
         api.judgeSendDiscoveredQR(5,pos_qz);
         String pos_qx = GotoQR(10.38, -7.542, 4.783, 0.0, 0.0, 1.0,0.0);
         api.judgeSendDiscoveredQR(3,pos_qx);
