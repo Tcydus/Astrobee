@@ -193,14 +193,14 @@ public class YourService extends KiboRpcService {
 //        detectorParameters.set_adaptiveThreshWinSizeMin(5);
 
         detectorParameters.set_maxMarkerPerimeterRate(0.8);
-        detectorParameters.set_minMarkerPerimeterRate(0.05);
+        detectorParameters.set_minMarkerPerimeterRate(0.025);
 
-        while(id < 0 && counter++ < 5) {
+        while(id < 0 && counter++ < 8) {
 
-            if(counter == 1)
+            if(counter%2 != 0)
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-            else if(counter == 5)
-                viaMove(10.95,-9.59,5.40,0,0,0.707,-0.707);
+//            else if(counter >= 5)
+//                viaMove(10.95,-9.59,5.40,0,0,0.707,-0.707);
             else
                 viaMove(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
 
