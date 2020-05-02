@@ -196,9 +196,9 @@ public class YourService extends KiboRpcService {
 //        detectorParameters.set_adaptiveThreshWinSizeMin(5);
 
         detectorParameters.set_maxMarkerPerimeterRate(0.8);
-        detectorParameters.set_minMarkerPerimeterRate(0.025);
+        detectorParameters.set_minMarkerPerimeterRate(0.02);
 
-        while(id < 0 && counter++ < 8) {
+        while(id < 0 && counter++ < 11) {
 
             if(counter%2 != 0)
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
@@ -220,7 +220,7 @@ public class YourService extends KiboRpcService {
                 Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
                 Log.d("getIDs", "After Detect");
                 id = (int) ids.get(0,0)[0];
-//                getArPos(corners);
+                getArPos(corners);
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
             }
@@ -241,14 +241,21 @@ public class YourService extends KiboRpcService {
         for(int i = 0;i<tvec.rows();i++)
         {
             for(int j = 0;j<tvec.cols();j++)
-                Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[0]);
+                for(int c = 0;c<tvec.channels();c++)
+                    Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[c]);
         }
 
         for(int i = 0;i<rvec.rows();i++)
         {
             for(int j = 0;j<rvec.cols();j++)
-                Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[0]);
+                for(int c = 0;c<tvec.channels();c++)
+                    Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[c]);
         }
+        Point AR_p = new Point(tvec.get(0,0)[0] * 0.01f,0,tvec.get(0,0)[1] * 0.01f);
+        Quaternion AR_q = new Quaternion(0,0,0,0);
+        Log.d("Aruco","B4 relativeMove");
+        api.relativeMoveTo(AR_p,AR_q,false);
+        Log.d("Aruco","After relativeMove");
     }
 
     public Mat getCamMat(){
