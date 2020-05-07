@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
@@ -46,7 +45,8 @@ public class YourService extends KiboRpcService {
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(11.00f, -5.50f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f);
+//        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
+        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
 //
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -81,7 +81,7 @@ public class YourService extends KiboRpcService {
 //        viaMove(10.65f,-7.54f,4.4f,0,0,0.707f,-0.707f);
 //        viaMove(10.65f,-9.48f,4.4f,0,0,0.707f,-0.707f);
 
-        viaMove(10.95f,-9.2f,5.35f,0,0,0.707f,-0.707f);
+        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
 
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
         api.judgeSendDiscoveredAR(Integer.toString(id));
@@ -188,25 +188,23 @@ public class YourService extends KiboRpcService {
 
         Mat ids = new Mat();
         int id = -1;
-        byte counter = 0;
+        boolean state = false;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
         DetectorParameters detectorParameters = DetectorParameters.create();
 
-//        detectorParameters.set_adaptiveThreshWinSizeMax(5);
-//        detectorParameters.set_adaptiveThreshWinSizeMin(5);
+//        detectorParameters.set_adaptiveThreshWinSizeMax(3);
+//        detectorParameters.set_adaptiveThreshWinSizeMin(13);
 
         detectorParameters.set_maxMarkerPerimeterRate(0.8);
         detectorParameters.set_minMarkerPerimeterRate(0.02);
 
-        while(id < 0 && counter++ < 11) {
+        while(id < 0) {
 
-            if(counter%2 != 0)
+            if(!state)
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-//            else if(counter >= 5)
-//                viaMove(10.95,-9.59,5.40,0,0,0.707,-0.707);
             else
                 viaMove(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-
+            state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
             Log.d("getIDs", "B4 Blur");
@@ -220,7 +218,7 @@ public class YourService extends KiboRpcService {
                 Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
                 Log.d("getIDs", "After Detect");
                 id = (int) ids.get(0,0)[0];
-                getArPos(corners);
+//                getArPos(corners);
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
             }
@@ -251,11 +249,21 @@ public class YourService extends KiboRpcService {
                 for(int c = 0;c<tvec.channels();c++)
                     Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[c]);
         }
+
+        Mat rot_mat = new Mat();
+        Calib3d.Rodrigues(rvec,rot_mat);
+
+        for(int i = 0;i<rot_mat.rows();i++)
+        {
+            for(int j = 0;j<rot_mat.cols();j++)
+                for(int c = 0;c<rot_mat.channels();c++)
+                    Log.d("Aruco","rot_mat rol" + i +" col " + j + " : " + rot_mat.get(i,j)[c]);
+        }
+
         Point AR_p = new Point(tvec.get(0,0)[0] * 0.01f,0,tvec.get(0,0)[1] * 0.01f);
         Quaternion AR_q = new Quaternion(0,0,0,0);
-        Log.d("Aruco","B4 relativeMove");
         api.relativeMoveTo(AR_p,AR_q,false);
-        Log.d("Aruco","After relativeMove");
+
     }
 
     public Mat getCamMat(){
