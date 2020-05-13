@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
@@ -42,11 +41,12 @@ public class YourService extends KiboRpcService {
         api.judgeSendStart();
 
 
-        String pos_x = GotoQR(11.45, -5.7f, 4.588f, 0.0f, 0.0f, 0.0f,1.0f);
+        String pos_x = GotoQR(11.45f, -5.658f, 4.583f, 0.0f, 0.0f, 0.0f,1.0f);
         api.judgeSendDiscoveredQR(0,pos_x);
-        String pos_z = GotoQR(11.00f, -5.50f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
+        String pos_z = GotoQR(10.917f, -5.542f, 4.40f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f);
+//        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
+        String pos_y = GotoQR(11.083f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
 //
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -81,7 +81,7 @@ public class YourService extends KiboRpcService {
 //        viaMove(10.65f,-7.54f,4.4f,0,0,0.707f,-0.707f);
 //        viaMove(10.65f,-9.48f,4.4f,0,0,0.707f,-0.707f);
 
-        viaMove(10.95f,-9.2f,5.35f,0,0,0.707f,-0.707f);
+        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
 
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
         api.judgeSendDiscoveredAR(Integer.toString(id));
@@ -106,7 +106,10 @@ public class YourService extends KiboRpcService {
 
         Log.d("QRDiscover","B4 getMat");
         Mat capture_mat = api.getMatNavCam();
+
+
         byte[] pixel = new byte[1280*960];
+        Log.d("QRDiscover","B4 getpixel");
         capture_mat.get(0,0,pixel);
         Image barcode = new Image(1280,960,"Y800");
         barcode.setData(pixel);
@@ -185,25 +188,23 @@ public class YourService extends KiboRpcService {
 
         Mat ids = new Mat();
         int id = -1;
-        byte counter = 0;
+        boolean state = false;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
         DetectorParameters detectorParameters = DetectorParameters.create();
 
-//        detectorParameters.set_adaptiveThreshWinSizeMax(5);
-//        detectorParameters.set_adaptiveThreshWinSizeMin(5);
+//        detectorParameters.set_adaptiveThreshWinSizeMax(3);
+//        detectorParameters.set_adaptiveThreshWinSizeMin(13);
 
         detectorParameters.set_maxMarkerPerimeterRate(0.8);
-        detectorParameters.set_minMarkerPerimeterRate(0.05);
+        detectorParameters.set_minMarkerPerimeterRate(0.02);
 
-        while(id < 0 && counter++ < 5) {
+        while(id < 0) {
 
-            if(counter == 1)
+            if(!state)
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-            else if(counter == 5)
-                viaMove(10.95,-9.59,5.40,0,0,0.707,-0.707);
             else
                 viaMove(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-
+            state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
             Log.d("getIDs", "B4 Blur");
@@ -225,24 +226,12 @@ public class YourService extends KiboRpcService {
         Log.d("getIDs", "Id : " + id);
         return id;
     }
-
     public void getArPos(List<Mat> corner){
-
-        Mat cam_mat = new Mat(3,3, CvType.CV_64F);
-        double[] cam_value = {344.173397, 0.000000, 630.793795, 0.000000, 344.277922, 487.033834, 0.000000,
-                0.000000, 1.000000};
-        cam_mat.put(0,0,cam_value);
-        Log.d("Aruco","cam_mat 0 :" + cam_mat.get(0,0)[0] + " cam_mat 3 : " + cam_mat.get(0,2)[0]);
-        Log.d("Aruco","cam_mat 5 :" + cam_mat.get(1,1)[0] + " cam_mat 6 : " + cam_mat.get(1,2)[0]);
-
-        Mat dist_mat = new Mat(1,5, CvType.CV_64F);
-        double[] dist_value = {-0.152963, 0.017530, -0.001107, -0.000210, 0.000000};
-        dist_mat.put(0,0,dist_value);
 
         Mat rvec = new Mat();
         Mat tvec = new Mat();
 
-        Aruco.estimatePoseSingleMarkers(corner,5,cam_mat,dist_mat,rvec,tvec);
+        Aruco.estimatePoseSingleMarkers(corner,5,getCamMat(),getDistMat(),rvec,tvec);
 
         Log.d("Aruco","tvec row : " + tvec.rows() + "tvec col" + tvec.cols());
         Log.d("Aruco","rvec row : " + rvec.rows() + "rvec col" + rvec.cols());
@@ -250,14 +239,46 @@ public class YourService extends KiboRpcService {
         for(int i = 0;i<tvec.rows();i++)
         {
             for(int j = 0;j<tvec.cols();j++)
-                Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[0]);
+                for(int c = 0;c<tvec.channels();c++)
+                    Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[c]);
         }
 
         for(int i = 0;i<rvec.rows();i++)
         {
             for(int j = 0;j<rvec.cols();j++)
-                Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[0]);
+                for(int c = 0;c<tvec.channels();c++)
+                    Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[c]);
         }
+
+        Mat rot_mat = new Mat();
+        Calib3d.Rodrigues(rvec,rot_mat);
+
+        for(int i = 0;i<rot_mat.rows();i++)
+        {
+            for(int j = 0;j<rot_mat.cols();j++)
+                for(int c = 0;c<rot_mat.channels();c++)
+                    Log.d("Aruco","rot_mat rol" + i +" col " + j + " : " + rot_mat.get(i,j)[c]);
+        }
+
+        Point AR_p = new Point(tvec.get(0,0)[0] * 0.01f,0,tvec.get(0,0)[1] * 0.01f);
+        Quaternion AR_q = new Quaternion(0,0,0,0);
+        api.relativeMoveTo(AR_p,AR_q,false);
+
+    }
+
+    public Mat getCamMat(){
+        Mat cam_mat = new Mat(3,3, CvType.CV_64F);
+        double[] cam_value = {344.173397, 0.000000, 630.793795, 0.000000, 344.277922, 487.033834, 0.000000,
+                0.000000, 1.000000};
+        cam_mat.put(0,0,cam_value);
+        return  cam_mat;
+    }
+
+    public Mat getDistMat(){
+        Mat dist_mat = new Mat(1,5, CvType.CV_64F);
+        double[] dist_value = {-0.152963, 0.017530, -0.001107, -0.000210, 0.000000};
+        dist_mat.put(0,0,dist_value);
+        return dist_mat;
     }
 
 }
