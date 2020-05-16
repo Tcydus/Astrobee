@@ -45,6 +45,7 @@ public class YourService extends KiboRpcService {
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(11.08f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
+
 //        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
         String pos_y = GotoQR(10.92f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
@@ -72,7 +73,7 @@ public class YourService extends KiboRpcService {
         double p3_qx = Double.parseDouble(temp_p3_qx[1]);
         double p3_qy = Double.parseDouble(temp_p3_qy[1]);
         double p3_qz = Double.parseDouble(temp_p3_qz[1]);
-        double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz));
+        double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz)); //t
 
 
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
