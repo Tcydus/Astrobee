@@ -72,7 +72,7 @@ public class YourService extends KiboRpcService {
         double p3_qx = Double.parseDouble(temp_p3_qx[1]);
         double p3_qy = Double.parseDouble(temp_p3_qy[1]);
         double p3_qz = Double.parseDouble(temp_p3_qz[1]);
-        double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz));
+        double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz)); //t
 
 
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
