@@ -45,7 +45,6 @@ public class YourService extends KiboRpcService {
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(11.08f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-
 //        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
         String pos_y = GotoQR(10.92f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
@@ -114,7 +113,6 @@ public class YourService extends KiboRpcService {
         capture_mat.get(0,0,pixel);
         Image barcode = new Image(1280,960,"Y800");
         barcode.setData(pixel);
-
 
         ImageScanner reader = new ImageScanner();
         reader.setConfig(Symbol.NONE, Config.ENABLE,0);
