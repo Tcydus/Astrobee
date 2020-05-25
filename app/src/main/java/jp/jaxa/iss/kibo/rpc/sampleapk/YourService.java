@@ -156,11 +156,24 @@ public class YourService extends KiboRpcService {
         return  decoded;
     }
 
+    public double constrain(double value,double min,double max){
+        if(value > max)
+            value = max;
+        else if(value < min)
+            value = min;
+        return value;
+    }
+
     public void moveToWrapper(double pos_x, double pos_y, double pos_z,
                               double qua_x, double qua_y, double qua_z,
                               double qua_w){
         final int LOOP_MAX = 3;
+
+        pos_x = constrain(pos_x,10.25,11.65);
+        pos_y = constrain(pos_y,-9.75,-3);
+        pos_z = constrain(pos_z,4.2,5.6);
         final Point point = new Point(pos_x, pos_y, pos_z);
+
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
         Result result = api.moveTo(point, quaternion, false);
@@ -176,6 +189,10 @@ public class YourService extends KiboRpcService {
                         double qua_w){
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
+
+        pos_x = constrain(pos_x,10.25,11.65);
+        pos_y = constrain(pos_y,-9.75,-3);
+        pos_z = constrain(pos_z,4.2,5.6);
         final Point point = new Point(pos_x, pos_y, pos_z);
 
         api.moveTo(point,quaternion,false);
