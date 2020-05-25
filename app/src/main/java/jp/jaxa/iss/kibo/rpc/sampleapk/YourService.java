@@ -189,10 +189,6 @@ public class YourService extends KiboRpcService {
                         double qua_w){
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
-
-        pos_x = constrain(pos_x,10.25,11.65);
-        pos_y = constrain(pos_y,-9.75,-3);
-        pos_z = constrain(pos_z,4.2,5.6);
         final Point point = new Point(pos_x, pos_y, pos_z);
 
         api.moveTo(point,quaternion,false);
