@@ -202,9 +202,11 @@ public class YourService extends KiboRpcService {
 //        detectorParameters.set_adaptiveThreshWinSizeMax(3);
 //        detectorParameters.set_adaptiveThreshWinSizeMin(13);
 
-        detectorParameters.set_maxMarkerPerimeterRate(0.8);
+        detectorParameters.set_maxMarkerPerimeterRate(1.0);
         detectorParameters.set_minMarkerPerimeterRate(0.02);
         detectorParameters.set_adaptiveThreshConstant(25);
+        detectorParameters.set_minDistanceToBorder(1);
+        detectorParameters.set_polygonalApproxAccuracyRate(0.15);
 
         while(id < 0) {
 
@@ -215,6 +217,7 @@ public class YourService extends KiboRpcService {
             state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
+            Imgproc.threshold(source, source, 30, 255, Imgproc.THRESH_BINARY);
             Log.d("getIDs", "B4 Blur");
 //            Mat blur = new Mat();
 //            Imgproc.GaussianBlur(source,blur,new Size(5,5),0);
