@@ -9,7 +9,6 @@ import com.yanzhenjie.zbar.ImageScanner;
 import com.yanzhenjie.zbar.Symbol;
 import com.yanzhenjie.zbar.SymbolSet;
 
-
 import org.opencv.aruco.Aruco;
 import org.opencv.aruco.DetectorParameters;
 import org.opencv.aruco.Dictionary;
@@ -19,10 +18,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
@@ -32,14 +29,13 @@ import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 import static java.lang.Math.sqrt;
 
 /**
- * Class meant to handle commands from the Ground Data System and execute them in Astrobee
+ * Class meant to handle commands from the Ground Data System and execute them in Astrobee4
  */
 
 public class YourService extends KiboRpcService {
     @Override
     protected void runPlan1(){
         api.judgeSendStart();
-
 
         String pos_x = GotoQR(11.45, -5.66f, 4.58f, 0.0f, 0.0f, 0.0f,1.0f);
         api.judgeSendDiscoveredQR(0,pos_x);
@@ -49,9 +45,8 @@ public class YourService extends KiboRpcService {
 //        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
         String pos_y = GotoQR(10.92f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
-//
+
         viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
-//        viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
         String pos_qy = GotoQR(11.45, -7.96, 5.08, 0.0, 0.0, 0.0,1.0);
         api.judgeSendDiscoveredQR(4,pos_qy);
@@ -75,12 +70,11 @@ public class YourService extends KiboRpcService {
         double p3_qz = Double.parseDouble(temp_p3_qz[1]);
         double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz)); //t
 
-
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
 
-
-//        viaMove(10.65f,-7.54f,4.4f,0,0,0.707f,-0.707f);
-//        viaMove(10.65f,-9.48f,4.4f,0,0,0.707f,-0.707f);
+        p3_x = constrain(p3_x,10.25,11.65);
+        p3_y = constrain(p3_y,-9.75,-3);
+        p3_z = constrain(p3_z,4.2,5.6);
 
         viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
 
@@ -92,6 +86,7 @@ public class YourService extends KiboRpcService {
         api.judgeSendFinishSimulation();
 
     }
+
     @Override
     protected void runPlan2(){
         // write here your plan 2
@@ -169,9 +164,6 @@ public class YourService extends KiboRpcService {
                               double qua_w){
         final int LOOP_MAX = 3;
 
-        pos_x = constrain(pos_x,10.25,11.65);
-        pos_y = constrain(pos_y,-9.75,-3);
-        pos_z = constrain(pos_z,4.2,5.6);
         final Point point = new Point(pos_x, pos_y, pos_z);
 
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
@@ -190,9 +182,6 @@ public class YourService extends KiboRpcService {
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
 
-        pos_x = constrain(pos_x,10.25,11.65);
-        pos_y = constrain(pos_y,-9.75,-3);
-        pos_z = constrain(pos_z,4.2,5.6);
         final Point point = new Point(pos_x, pos_y, pos_z);
 
         api.moveTo(point,quaternion,false);
@@ -215,6 +204,7 @@ public class YourService extends KiboRpcService {
 
         detectorParameters.set_maxMarkerPerimeterRate(0.8);
         detectorParameters.set_minMarkerPerimeterRate(0.02);
+        detectorParameters.set_adaptiveThreshConstant(25);
 
         while(id < 0) {
 
