@@ -70,11 +70,13 @@ public class YourService extends KiboRpcService {
         double p3_qz = Double.parseDouble(temp_p3_qz[1]);
         double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz)); //t
 
-        Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
-
         p3_x = constrain(p3_x,10.25,11.65);
         p3_y = constrain(p3_y,-9.75,-3);
         p3_z = constrain(p3_z,4.2,5.6);
+
+
+        Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
+
 
         viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
 
@@ -163,7 +165,6 @@ public class YourService extends KiboRpcService {
                               double qua_x, double qua_y, double qua_z,
                               double qua_w){
         final int LOOP_MAX = 3;
-
         final Point point = new Point(pos_x, pos_y, pos_z);
 
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
@@ -181,7 +182,6 @@ public class YourService extends KiboRpcService {
                         double qua_w){
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
-
         final Point point = new Point(pos_x, pos_y, pos_z);
 
         api.moveTo(point,quaternion,false);
