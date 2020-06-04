@@ -200,9 +200,6 @@ public class YourService extends KiboRpcService {
 <<<<<<< HEAD
 =======
         detectorParameters.set_adaptiveThreshConstant(25);
-<<<<<<< HEAD
->>>>>>> parent of 50834ce... Adpply BinaryThreshold before detection
-=======
 >>>>>>> parent of 50834ce... Adpply BinaryThreshold before detection
 
         while(id < 0) {
