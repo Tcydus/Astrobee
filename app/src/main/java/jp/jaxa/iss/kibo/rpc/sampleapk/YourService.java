@@ -194,6 +194,7 @@ public class YourService extends KiboRpcService {
     {
 
         Mat ids = new Mat();
+        Mat thresh = new Mat();
         int id = -1;
         boolean state = false;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
@@ -207,6 +208,7 @@ public class YourService extends KiboRpcService {
         detectorParameters.set_adaptiveThreshConstant(25);
         detectorParameters.set_minDistanceToBorder(1);
         detectorParameters.set_polygonalApproxAccuracyRate(0.15);
+        detectorParameters.set_cornerRefinementMethod(Aruco.CORNER_REFINE_NONE);
 
         while(id < 0) {
 
@@ -217,19 +219,21 @@ public class YourService extends KiboRpcService {
             state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
-            Imgproc.threshold(source, source, 30, 255, Imgproc.THRESH_BINARY);
-            Log.d("getIDs", "B4 Blur");
-//            Mat blur = new Mat();
-//            Imgproc.GaussianBlur(source,blur,new Size(5,5),0);
+            Imgproc.threshold(source, thresh, 30, 255, Imgproc.THRESH_BINARY);
             List<Mat> corners = new ArrayList<>();
 
             try {
                 Log.d("getIDs", "B4 Detect");
-//                Aruco.detectMarkers(blur, dictionary, corners, ids,detectorParameters);
                 Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
                 Log.d("getIDs", "After Detect");
+
+                if(ids.get(0,0) == null){
+                    Log.d("getIDs", "B4 Detect thresh");
+                    Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
+                    Log.d("getIDs", "After thresh");
+                }
+
                 id = (int) ids.get(0,0)[0];
-//                getArPos(corners);
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
             }
