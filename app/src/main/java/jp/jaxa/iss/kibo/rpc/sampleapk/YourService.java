@@ -197,6 +197,10 @@ public class YourService extends KiboRpcService {
 
         detectorParameters.set_maxMarkerPerimeterRate(0.8);
         detectorParameters.set_minMarkerPerimeterRate(0.02);
+<<<<<<< HEAD
+=======
+        detectorParameters.set_adaptiveThreshConstant(25);
+>>>>>>> parent of 50834ce... Adpply BinaryThreshold before detection
 
         while(id < 0) {
 
