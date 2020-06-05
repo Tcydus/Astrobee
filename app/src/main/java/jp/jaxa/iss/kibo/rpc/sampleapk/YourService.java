@@ -39,10 +39,10 @@ public class YourService extends KiboRpcService {
 
         String pos_x = GotoQR2(11.35, -5.66f, 4.53f, -0.259f, 0.0f, 0.966f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
+
         String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
 
-//        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
         String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
 
@@ -260,8 +260,8 @@ public class YourService extends KiboRpcService {
 
         Mat ids = new Mat();
         Mat thresh = new Mat();
-        int id = -1;
-        boolean state = false, fisrt_time = true;
+        int id = -1,count = 0;
+        boolean state = false;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
         DetectorParameters detectorParameters = DetectorParameters.create();
 
@@ -277,7 +277,9 @@ public class YourService extends KiboRpcService {
 
         while(id < 0) {
 
-            if(!state)
+            if(count == 2)
+                moveToWrapper(10.95f,-9.51f,5.2f,0,0,0.707,-0.707);
+            else if(!state)
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
             else
                 viaMove(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
@@ -294,11 +296,10 @@ public class YourService extends KiboRpcService {
                 Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
                 Log.d("getIDs", "After Detect");
 
-                if((ids.get(0,0) == null) && (fisrt_time)) {
+                if((ids.get(0,0) == null) && (count == 0)) {
                     Log.d("getIDs", "B4 Detect spare");
                     Aruco.detectMarkers(spare_ar, dictionary, corners, ids,detectorParameters);
                     Log.d("getIDs", "After spare");
-                    fisrt_time = false;
                 }
 
                 if(ids.get(0,0) == null){
@@ -307,6 +308,7 @@ public class YourService extends KiboRpcService {
                     Log.d("getIDs", "After thresh");
                 }
 
+                count++;
                 id = (int) ids.get(0,0)[0];
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
