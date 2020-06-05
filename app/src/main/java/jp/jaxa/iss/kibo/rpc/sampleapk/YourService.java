@@ -37,13 +37,13 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         api.judgeSendStart();
 
-        String pos_x = GotoQR(11.45, -5.66f, 4.58f, 0.0f, 0.0f, 0.0f,1.0f);
+        String pos_x = GotoQR2(11.35, -5.66f, 4.53f, -0.259f, 0.0f, 0.966f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
         String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
 
 //        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
-        String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
+        String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
 
         moveToWrapper(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -80,7 +80,7 @@ public class YourService extends KiboRpcService {
 
 
 //        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
-        moveToWrapper(10.95f,-9.45f,5.35f,0,0,0.707,-0.707);
+        moveToWrapper(10.95f,-9.51f,5.35f,0,0,0.707,-0.707);
         Mat spare_ar = api.getMatNavCam();
 
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw,spare_ar);
@@ -159,6 +159,65 @@ public class YourService extends KiboRpcService {
         return  decoded;
     }
 
+    public String GotoQR2(double pos_x, double pos_y, double pos_z,
+                         double qua_x, double qua_y, double qua_z,
+                         double qua_w,int cam)
+    {
+        String decoded = null;
+        final Point p = new Point(pos_x,pos_y,pos_z);
+        final Quaternion q = new Quaternion((float)qua_x,(float)qua_y,(float)qua_z,(float)qua_w);
+
+        Log.d("QRDiscover","Before moveto");
+        moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
+        int count = 0;
+
+        while(decoded == null)
+        {
+            count++;
+            if(count > 1)
+                api.moveTo(p,q,false);
+            Log.d("QRDiscover","B4 decode");
+            decoded = scanQRImage2(cam);
+            Log.d("QRDiscover","After decode");
+        }
+        Log.d("QRDiscover","count : " + count + " content : " + decoded);
+        return  decoded;
+    }
+
+    public String scanQRImage2(int cam){
+        String contents = null;
+        Mat capture_mat = new Mat();
+        Log.d("QRDiscover","B4 getMat");
+        if(cam == 0)
+            capture_mat = api.getMatNavCam();
+        else if(cam == 1)
+            capture_mat = api.getMatDockCam();
+
+
+        byte[] pixel = new byte[1280*960];
+        Log.d("QRDiscover","B4 getpixel");
+        capture_mat.get(0,0,pixel);
+        Image barcode = new Image(1280,960,"Y800");
+        barcode.setData(pixel);
+
+
+        ImageScanner reader = new ImageScanner();
+        reader.setConfig(Symbol.NONE, Config.ENABLE,0);
+        reader.setConfig(Symbol.QRCODE,Config.ENABLE,1);
+        Log.d("QRDiscover","B4 scan");
+        int result = reader.scanImage(barcode);
+        Log.d("QRDiscover","B4 for");
+
+        if(result != 0){
+            SymbolSet symbolSet = reader.getResults();
+            for(Symbol symbol : symbolSet){
+                contents = symbol.getData();
+            }
+        }
+
+        return contents;
+    }
+
     public double constrain(double value,double min,double max){
         if(value > max)
             value = max;
@@ -201,14 +260,13 @@ public class YourService extends KiboRpcService {
 
         Mat ids = new Mat();
         Mat thresh = new Mat();
-        Mat undist = new Mat();
         int id = -1;
         boolean state = false, fisrt_time = true;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
         DetectorParameters detectorParameters = DetectorParameters.create();
 
-//        detectorParameters.set_adaptiveThreshWinSizeMax(3);
-//        detectorParameters.set_adaptiveThreshWinSizeMin(13);
+//        detectorParameters.set_adaptiveThreshWinSizeMax(13);
+//        detectorParameters.set_adaptiveThreshWinSizeMin(3);
 
         detectorParameters.set_maxMarkerPerimeterRate(1.0);
         detectorParameters.set_minMarkerPerimeterRate(0.02);
@@ -227,10 +285,8 @@ public class YourService extends KiboRpcService {
             state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
-//            Log.d("getIDs", "B4 undistort");
-//            Imgproc.undistort(source,undist,getCamMat(),getDistMat());
-//            Log.d("getIDs", "B4 thresh");
-//            Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
+            Log.d("getIDs", "B4 thresh");
+            Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
             List<Mat> corners = new ArrayList<>();
 
             try {
@@ -238,16 +294,17 @@ public class YourService extends KiboRpcService {
                 Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
                 Log.d("getIDs", "After Detect");
 
-//                if(ids.get(0,0) == null){
-//                    Log.d("getIDs", "B4 Detect thresh");
-//                    Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
-//                    Log.d("getIDs", "After thresh");
-//                }
                 if((ids.get(0,0) == null) && (fisrt_time)) {
                     Log.d("getIDs", "B4 Detect spare");
                     Aruco.detectMarkers(spare_ar, dictionary, corners, ids,detectorParameters);
                     Log.d("getIDs", "After spare");
                     fisrt_time = false;
+                }
+
+                if(ids.get(0,0) == null){
+                    Log.d("getIDs", "B4 Detect thresh");
+                    Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
+                    Log.d("getIDs", "After thresh");
                 }
 
                 id = (int) ids.get(0,0)[0];
