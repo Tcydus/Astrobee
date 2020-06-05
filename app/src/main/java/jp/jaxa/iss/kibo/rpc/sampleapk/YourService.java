@@ -3,12 +3,12 @@ package jp.jaxa.iss.kibo.rpc.sampleapk;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+
 import com.yanzhenjie.zbar.Config;
 import com.yanzhenjie.zbar.Image;
 import com.yanzhenjie.zbar.ImageScanner;
 import com.yanzhenjie.zbar.Symbol;
 import com.yanzhenjie.zbar.SymbolSet;
-
 
 import org.opencv.aruco.Aruco;
 import org.opencv.aruco.DetectorParameters;
@@ -19,10 +19,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
@@ -32,7 +30,7 @@ import jp.jaxa.iss.kibo.rpc.api.KiboRpcService;
 import static java.lang.Math.sqrt;
 
 /**
- * Class meant to handle commands from the Ground Data System and execute them in Astrobee
+ * Class meant to handle commands from the Ground Data System and execute them in Astrobee4
  */
 
 public class YourService extends KiboRpcService {
@@ -40,23 +38,22 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         api.judgeSendStart();
 
-
         String pos_x = GotoQR(11.45, -5.66f, 4.58f, 0.0f, 0.0f, 0.0f,1.0f);
         api.judgeSendDiscoveredQR(0,pos_x);
-        String pos_z = GotoQR(11.08f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
+        String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
         api.judgeSendDiscoveredQR(2,pos_z);
-//        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
-        String pos_y = GotoQR(10.92f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
-        api.judgeSendDiscoveredQR(1,pos_y);
-//
-        viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
-//        viaMove(11.00f, -7.15f, 5.44f, 0.0f, 0.0f, 0.707f, -0.707f);
 
-        String pos_qy = GotoQR(11.45, -7.96, 5.08, 0.0, 0.0, 0.0,1.0);
+//        String pos_y = GotoQR(10.95f, -5.958f, 5.42f, -0.707f, 0.0f, -0.707f,0.0f); //Old (right side near airlock
+        String pos_y = GotoQR(11.03f, -5.96f, 5.42f, 0.5f, 0.5f, 0.5f,-0.5f); //New (above side near airlock)
+        api.judgeSendDiscoveredQR(1,pos_y);
+
+        viaMove(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f);
         api.judgeSendDiscoveredQR(4,pos_qy);
-        String pos_qz = GotoQR(10.92, -7.74, 5.4, 0.707f, 0.0f, 0.707f,0.0f);
+        String pos_qz = GotoQR(11.03f, -7.74f, 5.4f, 0.707f, 0.0f, 0.707f,0.0f);
         api.judgeSendDiscoveredQR(5,pos_qz);
-        String pos_qx = GotoQR(10.45, -7.46, 4.78, 0.0, 0.0, 1.0,0.0);
+        String pos_qx = GotoQR(10.45f, -7.54f, 4.78f, 0.0f, 0.0f, 1.0f,0.0f);
         api.judgeSendDiscoveredQR(3,pos_qx);
 
         String[] temp_p3_x = pos_x.split(" ");
@@ -72,18 +69,21 @@ public class YourService extends KiboRpcService {
         double p3_qx = Double.parseDouble(temp_p3_qx[1]);
         double p3_qy = Double.parseDouble(temp_p3_qy[1]);
         double p3_qz = Double.parseDouble(temp_p3_qz[1]);
-        double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz));
+        double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz)); //t
+
+        p3_x = constrain(p3_x,10.25,11.65);
+        p3_y = constrain(p3_y,-9.75,-3);
+        p3_z = constrain(p3_z,4.2,5.6);
 
 
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
 
 
-//        viaMove(10.65f,-7.54f,4.4f,0,0,0.707f,-0.707f);
-//        viaMove(10.65f,-9.48f,4.4f,0,0,0.707f,-0.707f);
+//        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
+        moveToWrapper(10.95f,-9.2f,5.35f,0,0,0.707,-0.707);
+        Mat spare_ar = api.getMatNavCam();
 
-        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
-
-        int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw);
+        int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw,spare_ar);
         api.judgeSendDiscoveredAR(Integer.toString(id));
 
         api.laserControl(true);
@@ -91,6 +91,7 @@ public class YourService extends KiboRpcService {
         api.judgeSendFinishSimulation();
 
     }
+
     @Override
     protected void runPlan2(){
         // write here your plan 2
@@ -144,15 +145,25 @@ public class YourService extends KiboRpcService {
         Log.d("QRDiscover","Before moveto");
         moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
         int count = 0;
+
         while(decoded == null && count++ < 5)
         {
             if(count > 1)
                 api.moveTo(p,q,false);
+            Log.d("QRDiscover","B4 decode");
             decoded = scanQRImage();
+            Log.d("QRDiscover","After decode");
         }
-        Log.d("QRDiscover","count : " + count);
-        Log.d("QRDiscover","content : " + decoded);
+        Log.d("QRDiscover","count : " + count + " content : " + decoded);
         return  decoded;
+    }
+
+    public double constrain(double value,double min,double max){
+        if(value > max)
+            value = max;
+        else if(value < min)
+            value = min;
+        return value;
     }
 
     public void moveToWrapper(double pos_x, double pos_y, double pos_z,
@@ -160,6 +171,7 @@ public class YourService extends KiboRpcService {
                               double qua_w){
         final int LOOP_MAX = 3;
         final Point point = new Point(pos_x, pos_y, pos_z);
+
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                 (float)qua_z, (float)qua_w);
         Result result = api.moveTo(point, quaternion, false);
@@ -183,10 +195,12 @@ public class YourService extends KiboRpcService {
 
     public int GotoAR(double pos_x, double pos_y, double pos_z,
                       double qua_x, double qua_y, double qua_z,
-                      double qua_w)
+                      double qua_w,Mat spare_ar)
     {
 
         Mat ids = new Mat();
+        Mat thresh = new Mat();
+        Mat undist = new Mat();
         int id = -1;
         boolean state = false;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
@@ -195,8 +209,12 @@ public class YourService extends KiboRpcService {
 //        detectorParameters.set_adaptiveThreshWinSizeMax(3);
 //        detectorParameters.set_adaptiveThreshWinSizeMin(13);
 
-        detectorParameters.set_maxMarkerPerimeterRate(0.8);
+        detectorParameters.set_maxMarkerPerimeterRate(1.0);
         detectorParameters.set_minMarkerPerimeterRate(0.02);
+        detectorParameters.set_adaptiveThreshConstant(25);
+        detectorParameters.set_minDistanceToBorder(1);
+        detectorParameters.set_polygonalApproxAccuracyRate(0.15);
+        detectorParameters.set_cornerRefinementMethod(Aruco.CORNER_REFINE_NONE);
 
         while(id < 0) {
 
@@ -204,66 +222,39 @@ public class YourService extends KiboRpcService {
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
             else
                 viaMove(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
+
             state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
-            Log.d("getIDs", "B4 Blur");
-//            Mat blur = new Mat();
-//            Imgproc.GaussianBlur(source,blur,new Size(5,5),0);
+//            Log.d("getIDs", "B4 undistort");
+//            Imgproc.undistort(source,undist,getCamMat(),getDistMat());
+//            Log.d("getIDs", "B4 thresh");
+//            Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
             List<Mat> corners = new ArrayList<>();
 
             try {
                 Log.d("getIDs", "B4 Detect");
-//                Aruco.detectMarkers(blur, dictionary, corners, ids,detectorParameters);
                 Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
                 Log.d("getIDs", "After Detect");
+
+//                if(ids.get(0,0) == null){
+//                    Log.d("getIDs", "B4 Detect thresh");
+//                    Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
+//                    Log.d("getIDs", "After thresh");
+//                }
+                if(ids.get(0,0) == null) {
+                    Log.d("getIDs", "B4 Detect spare");
+                    Aruco.detectMarkers(spare_ar, dictionary, corners, ids,detectorParameters);
+                    Log.d("getIDs", "After spare");
+                }
+
                 id = (int) ids.get(0,0)[0];
-//                getArPos(corners);
             } catch (Exception e) {
                 Log.d("getIDs", "Error");
             }
         }
         Log.d("getIDs", "Id : " + id);
         return id;
-    }
-    public void getArPos(List<Mat> corner){
-
-        Mat rvec = new Mat();
-        Mat tvec = new Mat();
-
-        Aruco.estimatePoseSingleMarkers(corner,5,getCamMat(),getDistMat(),rvec,tvec);
-
-        Log.d("Aruco","tvec row : " + tvec.rows() + "tvec col" + tvec.cols());
-        Log.d("Aruco","rvec row : " + rvec.rows() + "rvec col" + rvec.cols());
-
-        for(int i = 0;i<tvec.rows();i++)
-        {
-            for(int j = 0;j<tvec.cols();j++)
-                for(int c = 0;c<tvec.channels();c++)
-                    Log.d("Aruco","tvec rol" + i +" col " + j + " : " + tvec.get(i,j)[c]);
-        }
-
-        for(int i = 0;i<rvec.rows();i++)
-        {
-            for(int j = 0;j<rvec.cols();j++)
-                for(int c = 0;c<tvec.channels();c++)
-                    Log.d("Aruco","rvec rol" + i +" col " + j + " : " + rvec.get(i,j)[c]);
-        }
-
-        Mat rot_mat = new Mat();
-        Calib3d.Rodrigues(rvec,rot_mat);
-
-        for(int i = 0;i<rot_mat.rows();i++)
-        {
-            for(int j = 0;j<rot_mat.cols();j++)
-                for(int c = 0;c<rot_mat.channels();c++)
-                    Log.d("Aruco","rot_mat rol" + i +" col " + j + " : " + rot_mat.get(i,j)[c]);
-        }
-
-        Point AR_p = new Point(tvec.get(0,0)[0] * 0.01f,0,tvec.get(0,0)[1] * 0.01f);
-        Quaternion AR_q = new Quaternion(0,0,0,0);
-        api.relativeMoveTo(AR_p,AR_q,false);
-
     }
 
     public Mat getCamMat(){
