@@ -37,7 +37,7 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         api.judgeSendStart();
 
-        String pos_x = GotoQR2(11.35, -5.66f, 4.53f, -0.259f, 0.0f, 0.966f,0.0f,1);
+        String pos_x = GotoQR2(11.35, -5.66f, 4.53f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
 
         String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
@@ -71,9 +71,9 @@ public class YourService extends KiboRpcService {
         double p3_qw = sqrt(1.00f - (p3_qx*p3_qx) - (p3_qy*p3_qy) - (p3_qz*p3_qz)); //t
 
 
-        p3_x = constrain(p3_x,10.41,11.49);
-        p3_y = constrain(p3_y,-9.59,-3.16);
-        p3_z = constrain(p3_z,4.36,5.44);
+        p3_x = constrain(p3_x,10.45,11.45);
+        p3_y = constrain(p3_y,-9.55,-3.20);
+        p3_z = constrain(p3_z,4.40,5.40);
 
 
         Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
@@ -260,7 +260,7 @@ public class YourService extends KiboRpcService {
 
         Mat ids = new Mat();
         Mat thresh = new Mat();
-        int id = -1,count = 0;
+        int id = -1,count = 0,flag = 0;
         boolean state = false;
         Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
         DetectorParameters detectorParameters = DetectorParameters.create();
@@ -288,24 +288,43 @@ public class YourService extends KiboRpcService {
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
             Log.d("getIDs", "B4 thresh");
-            Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
             List<Mat> corners = new ArrayList<>();
 
             try {
-                Log.d("getIDs", "B4 Detect");
-                Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
-                Log.d("getIDs", "After Detect");
-
-                if((ids.get(0,0) == null) && (count == 0)) {
-                    Log.d("getIDs", "B4 Detect spare");
-                    Aruco.detectMarkers(spare_ar, dictionary, corners, ids,detectorParameters);
-                    Log.d("getIDs", "After spare");
+                if(count == 2)
+                {
+                    Log.d("getIDs", "B4 Detect black_spare");
+                    Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
+                    Log.d("getIDs", "After Detect black_spare");
+                    flag = 4;
+                    if(ids.get(0,0) == null){
+                        Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
+                        Log.d("getIDs", "B4 Detect black_spare_thresh");
+                        Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
+                        Log.d("getIDs", "After black_spare_thresh");
+                        flag = 5;
+                    }
                 }
+                else {
+                    Log.d("getIDs", "B4 Detect P3");
+                    Aruco.detectMarkers(source, dictionary, corners, ids, detectorParameters);
+                    Log.d("getIDs", "After Detect P3");
+                    flag = 1;
 
-                if(ids.get(0,0) == null){
-                    Log.d("getIDs", "B4 Detect thresh");
-                    Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
-                    Log.d("getIDs", "After thresh");
+                    if ((ids.get(0, 0) == null) && (count == 0)) {
+                        Log.d("getIDs", "B4 Detect center_spare");
+                        Aruco.detectMarkers(spare_ar, dictionary, corners, ids, detectorParameters);
+                        Log.d("getIDs", "After center_spare");
+                        flag = 2;
+                    }
+
+                    if (ids.get(0, 0) == null) {
+                        Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
+                        Log.d("getIDs", "B4 Detect P3_thresh");
+                        Aruco.detectMarkers(thresh, dictionary, corners, ids, detectorParameters);
+                        Log.d("getIDs", "After P3_thresh");
+                        flag = 3;
+                    }
                 }
 
                 count++;
@@ -314,7 +333,7 @@ public class YourService extends KiboRpcService {
                 Log.d("getIDs", "Error");
             }
         }
-        Log.d("getIDs", "Id : " + id);
+        Log.d("ARFinish", "Id : " + id + " Flag = " + flag);
         return id;
     }
 
