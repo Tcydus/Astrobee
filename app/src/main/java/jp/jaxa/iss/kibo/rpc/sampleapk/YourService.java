@@ -37,22 +37,22 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         api.judgeSendStart();
 
-        String pos_x = GotoQR2(11.35, -5.66f, 4.53f, 0.0f, 0.0f, 1.0f,0.0f,1);
+        String pos_x = GotoQR(11.35, -5.66f, 4.53f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
 
-        String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f);
+        String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f,0);
         api.judgeSendDiscoveredQR(2,pos_z);
 
-        String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f); //New (above side near airlock)
+        String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f,0); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
 
         moveToWrapper(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f);
+        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f,0);
         api.judgeSendDiscoveredQR(4,pos_qy);
-        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, 0.707f,0.0f);
+        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, 0.707f,0.0f,0);
         api.judgeSendDiscoveredQR(5,pos_qz);
-        String pos_qx = GotoQR(10.45f, -7.5f, 4.78f, 0.0f, 0.0f, 1.0f,0.0f);
+        String pos_qx = GotoQR(10.45f, -7.5f, 4.78f, 0.0f, 0.0f, 1.0f,0.0f,0);
         api.judgeSendDiscoveredQR(3,pos_qx);
 
         String[] temp_p3_x = pos_x.split(" ");
@@ -102,64 +102,7 @@ public class YourService extends KiboRpcService {
     }
     // You can add your method
 
-    public String scanQRImage(){
-        String contents = null;
-
-        Log.d("QRDiscover","B4 getMat");
-        Mat capture_mat = api.getMatNavCam();
-
-
-        byte[] pixel = new byte[1280*960];
-        Log.d("QRDiscover","B4 getpixel");
-        capture_mat.get(0,0,pixel);
-        Image barcode = new Image(1280,960,"Y800");
-        barcode.setData(pixel);
-
-
-        ImageScanner reader = new ImageScanner();
-        reader.setConfig(Symbol.NONE, Config.ENABLE,0);
-        reader.setConfig(Symbol.QRCODE,Config.ENABLE,1);
-        Log.d("QRDiscover","B4 scan");
-        int result = reader.scanImage(barcode);
-        Log.d("QRDiscover","B4 for");
-
-        if(result != 0){
-            SymbolSet symbolSet = reader.getResults();
-            for(Symbol symbol : symbolSet){
-                contents = symbol.getData();
-            }
-        }
-
-        return contents;
-    }
-
-
     public String GotoQR(double pos_x, double pos_y, double pos_z,
-                         double qua_x, double qua_y, double qua_z,
-                         double qua_w)
-    {
-        String decoded = null;
-        final Point p = new Point(pos_x,pos_y,pos_z);
-        final Quaternion q = new Quaternion((float)qua_x,(float)qua_y,(float)qua_z,(float)qua_w);
-
-        Log.d("QRDiscover","Before moveto");
-        moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
-        int count = 0;
-
-        while(decoded == null)
-        {
-            count++;
-            if(count > 1)
-                api.moveTo(p,q,false);
-            Log.d("QRDiscover","B4 decode");
-            decoded = scanQRImage();
-            Log.d("QRDiscover","After decode");
-        }
-        Log.d("QRDiscover","count : " + count + " content : " + decoded);
-        return  decoded;
-    }
-
-    public String GotoQR2(double pos_x, double pos_y, double pos_z,
                          double qua_x, double qua_y, double qua_z,
                          double qua_w,int cam)
     {
@@ -177,14 +120,14 @@ public class YourService extends KiboRpcService {
             if(count > 1)
                 api.moveTo(p,q,false);
             Log.d("QRDiscover","B4 decode");
-            decoded = scanQRImage2(cam);
+            decoded = scanQRImage(cam);
             Log.d("QRDiscover","After decode");
         }
         Log.d("QRDiscover","count : " + count + " content : " + decoded);
         return  decoded;
     }
 
-    public String scanQRImage2(int cam){
+    public String scanQRImage(int cam){
         String contents = null;
         Mat capture_mat = new Mat();
         Log.d("QRDiscover","B4 getMat");
