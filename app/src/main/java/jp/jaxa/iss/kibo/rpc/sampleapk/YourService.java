@@ -110,7 +110,6 @@ public class YourService extends KiboRpcService {
         final Point p = new Point(pos_x,pos_y,pos_z);
         final Quaternion q = new Quaternion((float)qua_x,(float)qua_y,(float)qua_z,(float)qua_w);
 
-        Log.d("QRDiscover","Before moveto");
         moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
         int count = 0;
 
@@ -119,9 +118,8 @@ public class YourService extends KiboRpcService {
             count++;
             if(count > 1)
                 api.moveTo(p,q,false);
-            Log.d("QRDiscover","B4 decode");
             decoded = scanQRImage(cam);
-            Log.d("QRDiscover","After decode");
+
         }
         Log.d("QRDiscover","count : " + count + " content : " + decoded);
         return  decoded;
@@ -130,7 +128,6 @@ public class YourService extends KiboRpcService {
     public String scanQRImage(int cam){
         String contents = null;
         Mat capture_mat = new Mat();
-        Log.d("QRDiscover","B4 getMat");
         if(cam == 0)
             capture_mat = api.getMatNavCam();
         else if(cam == 1)
@@ -138,7 +135,6 @@ public class YourService extends KiboRpcService {
 
 
         byte[] pixel = new byte[1280*960];
-        Log.d("QRDiscover","B4 getpixel");
         capture_mat.get(0,0,pixel);
         Image barcode = new Image(1280,960,"Y800");
         barcode.setData(pixel);
@@ -147,9 +143,7 @@ public class YourService extends KiboRpcService {
         ImageScanner reader = new ImageScanner();
         reader.setConfig(Symbol.NONE, Config.ENABLE,0);
         reader.setConfig(Symbol.QRCODE,Config.ENABLE,1);
-        Log.d("QRDiscover","B4 scan");
         int result = reader.scanImage(barcode);
-        Log.d("QRDiscover","B4 for");
 
         if(result != 0){
             SymbolSet symbolSet = reader.getResults();
@@ -228,7 +222,6 @@ public class YourService extends KiboRpcService {
                 viaMove(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
 
             state = !state;
-            Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
             List<Mat> corners = new ArrayList<>();
 
