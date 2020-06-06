@@ -40,7 +40,7 @@ public class YourService extends KiboRpcService {
         String pos_x = GotoQR(11.35, -5.66f, 4.53f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
 
-        String pos_z = GotoQR(10.92f, -5.54f, 4.4f, 0.707f, 0.0f, -0.707f,0.0f,0);
+        String pos_z = GotoQR(10.92f, -5.54f, 4.4f, -0.707f, 0.0f, -0.707f,0.0f,1);
         api.judgeSendDiscoveredQR(2,pos_z);
 
         String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f,0); //New (above side near airlock)
@@ -48,7 +48,8 @@ public class YourService extends KiboRpcService {
 
         moveToWrapper(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f,0);
+//        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f,0);
+        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(4,pos_qy);
         String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, 0.707f,0.0f,0);
         api.judgeSendDiscoveredQR(5,pos_qz);
@@ -82,7 +83,6 @@ public class YourService extends KiboRpcService {
 //        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
         moveToWrapper(10.95f,-9.51f,5.35f,0,0,0.707,-0.707);
         Mat spare_ar = api.getMatNavCam();
-
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw,spare_ar);
         api.judgeSendDiscoveredAR(Integer.toString(id));
 
@@ -221,7 +221,7 @@ public class YourService extends KiboRpcService {
         while(id < 0) {
 
             if(count == 2)
-                moveToWrapper(10.95f,-9.51f,5.2f,0,0,0.707,-0.707);
+                moveToWrapper(10.95f,-9.55f,5.1f,0,0,0.707,-0.707);
             else if(!state)
                 moveToWrapper(pos_x,pos_y,pos_z,qua_x,qua_y,qua_z,qua_w);
             else
@@ -230,7 +230,6 @@ public class YourService extends KiboRpcService {
             state = !state;
             Log.d("getIDs", "B4 getMat");
             Mat source = api.getMatNavCam();
-            Log.d("getIDs", "B4 thresh");
             List<Mat> corners = new ArrayList<>();
 
             try {
@@ -276,7 +275,7 @@ public class YourService extends KiboRpcService {
                 Log.d("getIDs", "Error");
             }
         }
-        Log.d("ARFinish", "Id : " + id + " Flag = " + flag);
+        Log.d("ARFinish", "Id : " + id + " Flag = " + flag + " count = " + count);
         return id;
     }
 
