@@ -1,3 +1,4 @@
+
 package jp.jaxa.iss.kibo.rpc.sampleapk;
 
 import android.graphics.Bitmap;
@@ -37,10 +38,11 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         api.judgeSendStart();
 
-        String pos_x = GotoQR(11.35, -5.66f, 4.53f, 0.0f, 0.0f, 1.0f,0.0f,1);
+        String pos_x = GotoQR(11.35f, -5.75f, 4.50f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
 
-        String pos_z = GotoQR(10.92f, -5.54f, 4.53f, -0.707f, 0.0f, -0.707f,0.0f,1);
+        String pos_z = GotoQR(11.00f, -5.55f, 4.50f, -0.707f, 0.0f, -0.707f,0.0f,1);
+//        String pos_z = GotoQR(11.35f,-5.75f, 4.50f, 0.354f, 0.354f, -0.854f,-0.146f,0);
         api.judgeSendDiscoveredQR(2,pos_z);
 
         String pos_y = GotoQR(10.98f, -5.91f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f,0); //New (above side near airlock)
@@ -48,12 +50,17 @@ public class YourService extends KiboRpcService {
 
         moveToWrapper(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-//        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f,0);
-        String pos_qy = GotoQR(11.45f,  -8.05f, 5.08f, 0.0f, 0.0f, 1.0f,0.0f,1);
-        api.judgeSendDiscoveredQR(4,pos_qy);
-        String pos_qz = GotoQR(11.2f, -7.82f, 5.43f, 0.0f, 0.0f, 0.0f,0.0f,0);
+//        String pos_qz = GotoQR(11.27f, -7.85f, 5.24f, -0.146f, 0.354f, -0.354f,0.854f,1);
+        String pos_qz = GotoQR(11.15f, -7.63f, 5.27f, -0.109f, 0.408f, -0.235f,0.875f,1);
         api.judgeSendDiscoveredQR(5,pos_qz);
-//        String pos_qx = GotoQR(10.45f, -7.66f, 4.88f, 0.0f, 0.0f, 0.0f,0.0f,0);
+        String pos_qy = GotoQR(11.35f, -7.85f, 5.17f, 0.0f, 0.0f, 0.0f,0.0f,0);
+        api.judgeSendDiscoveredQR(4,pos_qy);
+
+//        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 1.0f,0.0f,1);
+//        api.judgeSendDiscoveredQR(4,pos_qy);
+//        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, 0.707f,0.0f,0);
+//        api.judgeSendDiscoveredQR(5,pos_qz);
+
         String pos_qx = GotoQR(10.45f, -7.5f, 4.78f, 0.0f, 0.0f, 1.0f,0.0f,0);
         api.judgeSendDiscoveredQR(3,pos_qx);
 
@@ -79,15 +86,12 @@ public class YourService extends KiboRpcService {
         p3_z = constrain(p3_z,4.40,5.40);
 
 
-        Log.d("QR","x = " + p3_x + " y = " + p3_y + " z = " + p3_z + " qx = " + p3_qx + " qy = " + p3_qy + " qz = " + p3_qz + " qw = " + p3_qw);
-
 
 //        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
         moveToWrapper(10.95f,-9.55f,5.35f,0,0,0.707,-0.707);
         Mat spare_ar = api.getMatNavCam();
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw,spare_ar);
         api.judgeSendDiscoveredAR(Integer.toString(id));
-
 
         api.laserControl(true);
 
@@ -218,15 +222,13 @@ public class YourService extends KiboRpcService {
         List<Mat> corners = new ArrayList<>();
         List<Mat> reject = new ArrayList<>();
 
-        Log.d("getIDs", "B4 Detect center_spare");
+
         Aruco.detectMarkers(spare_ar, dictionary, corners, ids, detectorParameters);
-        Log.d("getIDs", "After center_spare");
         flag = 2;
         try {
             id = (int) ids.get(0,0)[0];
         }
         catch (Exception e) {
-            // Nothing ///
         }
 
         while(id < 0) {
@@ -245,31 +247,24 @@ public class YourService extends KiboRpcService {
             try {
                 if(count == 2)
                 {
-                    Log.d("getIDs", "B4 Detect black_spare");
                     Aruco.detectMarkers(source, dictionary, corners, ids,detectorParameters);
-                    Log.d("getIDs", "After Detect black_spare");
                     flag = 4;
                     if(ids.get(0,0) == null){
                         Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
-                        Log.d("getIDs", "B4 Detect black_spare_thresh");
                         Aruco.detectMarkers(thresh, dictionary, corners, ids,detectorParameters);
-                        Log.d("getIDs", "After black_spare_thresh");
                         flag = 5;
                     }
                 }
                 else {
-                    Log.d("getIDs", "B4 Detect P3");
+
                     Aruco.detectMarkers(source, dictionary, corners, ids, detectorParameters);
-                    Log.d("getIDs", "After Detect P3");
                     flag = 1;
 
 
                     if (ids.get(0, 0) == null) {
                         Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
-                        Log.d("getIDs", "B4 Detect P3_thresh");
 //                        Aruco.detectMarkers(thresh, dictionary, corners, ids, detectorParameters);
                         Aruco.detectMarkers(thresh, dictionary, corners, ids, detectorParameters,reject,getCamMat(),getDistMat());
-                        Log.d("getIDs", "After P3_thresh");
                         flag = 3;
                     }
                 }
