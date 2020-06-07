@@ -40,7 +40,7 @@ public class YourService extends KiboRpcService {
         String pos_x = GotoQR(11.35, -5.66f, 4.53f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(0,pos_x);
 
-        String pos_z = GotoQR(10.92f, -5.54f, 4.4f, -0.707f, 0.0f, -0.707f,0.0f,1);
+        String pos_z = GotoQR(10.92f, -5.54f, 4.53f, -0.707f, 0.0f, -0.707f,0.0f,1);
         api.judgeSendDiscoveredQR(2,pos_z);
 
         String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f,0); //New (above side near airlock)
@@ -51,8 +51,9 @@ public class YourService extends KiboRpcService {
 //        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f,0);
         String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(4,pos_qy);
-        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, 0.707f,0.0f,0);
+        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, -0.707f,0.0f,0);
         api.judgeSendDiscoveredQR(5,pos_qz);
+
         String pos_qx = GotoQR(10.45f, -7.5f, 4.78f, 0.0f, 0.0f, 1.0f,0.0f,0);
         api.judgeSendDiscoveredQR(3,pos_qx);
 
