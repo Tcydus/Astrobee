@@ -224,6 +224,7 @@ public class YourService extends KiboRpcService {
             id = (int) ids.get(0,0)[0];
         }
         catch (Exception e) {
+            // Nothing ///
         }
 
         while(id < 0) {
