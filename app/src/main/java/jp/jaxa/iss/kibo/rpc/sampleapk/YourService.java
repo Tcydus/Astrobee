@@ -50,7 +50,7 @@ public class YourService extends KiboRpcService {
         moveToWrapper(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
 
 //        String pos_qz = GotoQR(11.27f, -7.85f, 5.24f, -0.146f, 0.354f, -0.354f,0.854f,1);
-        String pos_qz = GotoQR(11.15f, -7.63f, 5.27f, -0.109f, 0.408f, -0.235f,0.875f,1);
+        String pos_qz = GotoQR(11.15f, -7.63f, 5.27f, 0.0f, 0.423f, 0.0f,0.906f,1);
         api.judgeSendDiscoveredQR(5,pos_qz);
         String pos_qy = GotoQR(11.35f, -7.85f, 5.17f, 0.0f, 0.0f, 0.0f,0.0f,0);
         api.judgeSendDiscoveredQR(4,pos_qy);
