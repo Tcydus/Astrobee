@@ -43,7 +43,7 @@ public class YourService extends KiboRpcService {
         String pos_z = GotoQR(10.92f, -5.54f, 4.53f, -0.707f, 0.0f, -0.707f,0.0f,1);
         api.judgeSendDiscoveredQR(2,pos_z);
 
-        String pos_y = GotoQR(10.98f, -5.96f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f,0); //New (above side near airlock)
+        String pos_y = GotoQR(10.98f, -5.91f, 5.42f, 0.0f, 0.0f, 0.0f,0.0f,0); //New (above side near airlock)
         api.judgeSendDiscoveredQR(1,pos_y);
 
         moveToWrapper(10.50f, -6.45f, 5.44f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -51,9 +51,8 @@ public class YourService extends KiboRpcService {
 //        String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 0.0f,1.0f,0);
         String pos_qy = GotoQR(11.45f, -7.96f, 5.08f, 0.0f, 0.0f, 1.0f,0.0f,1);
         api.judgeSendDiscoveredQR(4,pos_qy);
-        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, -0.707f,0.0f,0);
+        String pos_qz = GotoQR(11.08f, -7.74f, 5.4f, 0.707f, 0.0f, -0.707f,0.0f,1);
         api.judgeSendDiscoveredQR(5,pos_qz);
-
         String pos_qx = GotoQR(10.45f, -7.5f, 4.78f, 0.0f, 0.0f, 1.0f,0.0f,0);
         api.judgeSendDiscoveredQR(3,pos_qx);
 
@@ -82,10 +81,11 @@ public class YourService extends KiboRpcService {
 
 
 //        viaMove(10.95f,-9.2f,5.35f,0,0,0,0);
-        moveToWrapper(10.95f,-9.51f,5.35f,0,0,0.707,-0.707);
+        moveToWrapper(10.95f,-9.55f,5.35f,0,0,0.707,-0.707);
         Mat spare_ar = api.getMatNavCam();
         int id = GotoAR(p3_x,p3_y,p3_z,p3_qx,p3_qy,p3_qz,p3_qw,spare_ar);
         api.judgeSendDiscoveredAR(Integer.toString(id));
+
 
         api.laserControl(true);
 
@@ -213,6 +213,19 @@ public class YourService extends KiboRpcService {
         detectorParameters.set_polygonalApproxAccuracyRate(0.15);
         detectorParameters.set_cornerRefinementMethod(Aruco.CORNER_REFINE_NONE);
 
+        List<Mat> corners = new ArrayList<>();
+        List<Mat> reject = new ArrayList<>();
+
+        Log.d("getIDs", "B4 Detect center_spare");
+        Aruco.detectMarkers(spare_ar, dictionary, corners, ids, detectorParameters);
+        Log.d("getIDs", "After center_spare");
+        flag = 2;
+        try {
+            id = (int) ids.get(0,0)[0];
+        }
+        catch (Exception e) {
+        }
+
         while(id < 0) {
 
             if(count == 2)
@@ -224,7 +237,7 @@ public class YourService extends KiboRpcService {
 
             state = !state;
             Mat source = api.getMatNavCam();
-            List<Mat> corners = new ArrayList<>();
+
 
             try {
                 if(count == 2)
@@ -247,17 +260,12 @@ public class YourService extends KiboRpcService {
                     Log.d("getIDs", "After Detect P3");
                     flag = 1;
 
-                    if ((ids.get(0, 0) == null) && (count == 0)) {
-                        Log.d("getIDs", "B4 Detect center_spare");
-                        Aruco.detectMarkers(spare_ar, dictionary, corners, ids, detectorParameters);
-                        Log.d("getIDs", "After center_spare");
-                        flag = 2;
-                    }
 
                     if (ids.get(0, 0) == null) {
                         Imgproc.threshold(source, thresh, 25, 255, Imgproc.THRESH_BINARY);
                         Log.d("getIDs", "B4 Detect P3_thresh");
-                        Aruco.detectMarkers(thresh, dictionary, corners, ids, detectorParameters);
+//                        Aruco.detectMarkers(thresh, dictionary, corners, ids, detectorParameters);
+                        Aruco.detectMarkers(thresh, dictionary, corners, ids, detectorParameters,reject,getCamMat(),getDistMat());
                         Log.d("getIDs", "After P3_thresh");
                         flag = 3;
                     }
